@@ -1061,3 +1061,4 @@ C:/Users/binam/OneDrive/Desktop/SeleafAPI/SeleafAPI/obj/Debug/net8.0/ref/SeleafA
 /Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/Debug/net8.0/SeleafAPI.pdb
 /Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/Debug/net8.0/SeleafAPI.genruntimeconfig.cache
 /Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/Debug/net8.0/ref/SeleafAPI.dll
+/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/Debug/net8.0/SeleafAPI.sourcelink.json
