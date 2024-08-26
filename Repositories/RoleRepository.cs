@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 
 namespace SeleafAPI.Repositories
@@ -15,5 +16,6 @@ namespace SeleafAPI.Repositories
         public Task<bool> RoleExistsAsync(string role) => _roleManager.RoleExistsAsync(role);
 
         public Task<IdentityResult> CreateRoleAsync(IdentityRole role) => _roleManager.CreateAsync(role);
+
     }
 }

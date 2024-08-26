@@ -33,26 +33,81 @@ namespace SeleafAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
-            var userEmail = await _userRepository.FindByEmailAsync(model.Email);
-            if (userEmail != null)
+            try
             {
-                return BadRequest("Email Already Exists.");
-            }
+                // Check if the email already exists
+                var userEmail = await _userRepository.FindByEmailAsync(model.Email);
+                if (userEmail != null)
+                {
+                    return BadRequest("Email already exists.");
+                }
 
-            var user = new AppUser { UserName = model.Username, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, isStudent = model.isStudent };
-            var result = await _userRepository.CreateAsync(user, model.Password);
-            //if user un tick student or if isstudnet is false then user will automatically be a sponsor 
-            if (!model.isStudent)
-            {
-                result = await _userRepository.AddToRoleAsync(user, "Sponsor");
-            }
+                // Create a new user
+                var user = new AppUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    isStudent = model.isStudent
+                };
 
-            if (result.Succeeded)
+                // Attempt to create the user
+                var result = await _userRepository.CreateAsync(user, model.Password);
+
+                // Assign role based on whether the user is a student
+                if (!model.isStudent)
+                {
+                    result = await _userRepository.AddToRoleAsync(user, "Sponsor");
+                }
+                else
+                {
+                    result = await _userRepository.AddToRoleAsync(user, "Student");
+                }
+
+                // If the user creation and role assignment succeeded
+                if (result.Succeeded)
+                {
+                    // Fetch roles and remove duplicates
+                    var userRoles = await _userRepository.GetRolesAsync(user);
+                    var distinctRoles = userRoles.Distinct().ToList();
+
+                    // Create claims for the JWT
+                    var authClaims = new List<Claim>
             {
-                return Ok(new { message = "User registered successfully" });
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // Username claim
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
+                new Claim("userId", user.Id), // User ID claim
+            };
+
+                    // Add distinct roles to the claims
+                    authClaims.AddRange(distinctRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+                    // Generate JWT token
+                    var token = new JwtSecurityToken(
+                        issuer: _configuration["Jwt:Issuer"],
+                        expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
+                        claims: authClaims,
+                        signingCredentials: new SigningCredentials(
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
+                            SecurityAlgorithms.HmacSha256)
+                    );
+
+                    // Return the token and a success message
+                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), message = "User registered successfully" });
+                }
+
+                // If user creation or role assignment failed, return the errors
+                return BadRequest(result.Errors);
             }
-            return BadRequest(result.Errors);
+            catch (Exception ex)
+            {
+                // Log the exception and return a 500 status code with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
@@ -61,23 +116,28 @@ namespace SeleafAPI.Controllers
             if (user != null && await _userRepository.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userRepository.GetRolesAsync(user);
+                var distinctRoles = userRoles.Distinct().ToList();
 
+                // Create claims for the JWT
                 var authClaims = new List<Claim>
-                {
-                   new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // This holds the username
-                   new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID
-                   new Claim("userId", user.Id), // Use a custom claim for the user ID
-                   new Claim(ClaimTypes.Role, "admin") // Example role
-                };
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // Username claim
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
+                new Claim("userId", user.Id), // User ID claim
+            };
 
-                authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+                // Add distinct roles to the claims
+                authClaims.AddRange(distinctRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
+                // Generate JWT token
                 var token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],
                     expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
                     claims: authClaims,
-                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
-                    SecurityAlgorithms.HmacSha256));
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
+                        SecurityAlgorithms.HmacSha256)
+                );
 
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
             }

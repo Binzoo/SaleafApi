@@ -28,7 +28,7 @@ namespace SeleafAPI.Controllers
         [HttpPost("api/webhook/yoco")]
         public async Task<IActionResult> YocoWebhook([FromBody] YocoWebhookEvent webhookEvent)
         {
-
+            System.Console.WriteLine(webhookEvent);
             if (webhookEvent == null || string.IsNullOrEmpty(webhookEvent.Type))
             {
                 return BadRequest("Invalid webhook event data.");
