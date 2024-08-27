@@ -46,7 +46,63 @@ namespace SeleafAPI.Controllers
                     return BadRequest("No user found.");
                 }
 
-                await _emailService.SendEmailAsync(paidUser.Email!, "SALEAF", $"Thank you for Donation.");
+                string body = @"
+                            <html>
+                            <head>
+                                <style>
+                                    .email-content {
+                                        font-family: Arial, sans-serif;
+                                        color: #333;
+                                    }
+                                    .email-header {
+                                        background-color: #f8f8f8;
+                                        padding: 20px;
+                                        text-align: center;
+                                        border-bottom: 1px solid #ddd;
+                                    }
+                                    .email-body {
+                                        padding: 20px;
+                                    }
+                                    .email-footer {
+                                        background-color: #f8f8f8;
+                                        padding: 10px;
+                                        text-align: center;
+                                        font-size: 12px;
+                                        color: #888;
+                                        border-top: 1px solid #ddd;
+                                    }
+                                    .button {
+                                        background-color: #28a745;
+                                        color: white;
+                                        padding: 10px 20px;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        display: inline-block;
+                                        border-radius: 5px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class='email-content'>
+                                    <div class='email-header'>
+                                        <h1>Thank You for Your Donation!</h1>
+                                    </div>
+                                    <div class='email-body'>
+                                        <p>Dear valued supporter,</p>
+                                        <p>We sincerely appreciate your generous donation.</p>
+                                        <p>Your support helps us continue our work and make a positive impact.</p>
+                                        <p>If you have any questions, feel free to <a href='#'>contact us</a>.</p>
+                                        <p>Best regards,<br/>The SALEAF Team</p>
+                                        <a href='#' class='button'>View Your Donation</a>
+                                    </div>
+                                    <div class='email-footer'>
+                                        <p>&copy; 2024 SALEAF. All rights reserved.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
+
+                await _emailService.SendEmailAsync(paidUser.Email!, "SALEAF", body);
             }
             else
             {
