@@ -235,13 +235,13 @@ namespace SeleafAPI.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> RestPassword([FromBody] ResetPasswordDTO model)
         {
-            var user = await _userRepository.FindByEmailAsync(model.Email);
+            var user = await _userRepository.FindByEmailAsync(model.Email!);
             if (user == null)
             {
                 return BadRequest("User not found");
             }
 
-            var isValidCode = await ValidateResetCodeAsync(user.Id, model.Code);
+            var isValidCode = await ValidateResetCodeAsync(user.Id, model.Code!);
             if (!isValidCode)
             {
                 return BadRequest("Invalid or Expired Code");
@@ -253,7 +253,7 @@ namespace SeleafAPI.Controllers
                 return BadRequest(removePasswordResult.Errors);
             }
 
-            var addPasswordResult = await _userRepository.AddPasswordAsync(user, model.NewPassword);
+            var addPasswordResult = await _userRepository.AddPasswordAsync(user, model.NewPassword!);
             if (!addPasswordResult.Succeeded)
             {
                 return BadRequest(addPasswordResult.Errors);

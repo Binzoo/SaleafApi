@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
+using SaleafApi.Interfaces;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
@@ -10,9 +13,11 @@ namespace SeleafAPI.Controllers
     public class DonationController : ControllerBase
     {
         private readonly IPayment _payment;
-        public DonationController(IPayment payment)
+        private readonly IDonation _donation;
+        public DonationController(IPayment payment, IDonation donation)
         {
             _payment = payment;
+            _donation = donation;
         }
 
         [HttpPost]
@@ -32,9 +37,12 @@ namespace SeleafAPI.Controllers
                 IsPaid = false,
                 isAnonymous = true
             };
+
             try
             {
-                var redirectUrl = await _payment.InitiateCheckoutAsync(donation, request.CancelUrl, request.SuccessUrl, request.FailureUrl);
+                var redirectUrl = await _payment.InitiateCheckoutAsync(await _donation.CreateDonationAsync
+                (donation), request.CancelUrl!, request.SuccessUrl!, request.FailureUrl!);
+
                 return Ok(new { redirectUrl });
             }
             catch (Exception ex)
@@ -42,5 +50,29 @@ namespace SeleafAPI.Controllers
                 return StatusCode(500, $"Error processing the donation: {ex.Message}");
             }
         }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetDonations()
+        {
+            var donations = await _donation.GetDonations();
+
+            var model = donations.Select(d => new
+            {
+                UserName = d.AppUser?.UserName ?? "Unknown",
+                FirstName = d.AppUser?.FirstName ?? "Unknown",
+                LastName = d.AppUser?.LastName ?? "Unknown",
+                DonationTypeName = d.DonationType?.DonationsName ?? "No Type",
+                d.PaymentId,
+                d.Amount,
+                d.Currency,
+                d.CreatedAt,
+                d.IsPaid,
+                d.isAnonymous
+            }).ToList();
+
+            return Ok(model);
+        }
+
     }
 }

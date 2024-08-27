@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SaleafApi.Interfaces;
 using SeleafAPI.Interfaces;
 
 namespace SeleafAPI.Controllers
@@ -11,17 +12,19 @@ namespace SeleafAPI.Controllers
     public class WebHookController : ControllerBase
     {
 
-        private readonly IPayment _paymentRepository;
+        private readonly IDonation _donationRepository;
         private readonly IEmailSender _emailService;
-
         private readonly IUserRepository _user;
+        private readonly IPayment _paymentRepository;
 
 
-        public WebHookController(IPayment paymentRepository, IEmailSender emailService, IUserRepository user)
+
+        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository)
         {
-            _paymentRepository = paymentRepository;
+            _donationRepository = donationRepository;
             _emailService = emailService;
             _user = user;
+            _paymentRepository = paymentRepository;
         }
 
         // POST: api/webhook/yoco
@@ -36,16 +39,15 @@ namespace SeleafAPI.Controllers
 
             if (webhookEvent.Type == "payment.succeeded")
             {
-                var checkoutId = webhookEvent.Payload.Metadata.CheckoutId;
+                var checkoutId = webhookEvent.Payload!.Metadata!.CheckoutId;
                 // Update the donation status to "Paid"
-                await _paymentRepository.UpdateDonationStatusAsync(checkoutId, true);
-                var userId = await _paymentRepository.GetAppUserIdByPaymentId(checkoutId);
+                await _donationRepository.UpdateDonationStatusAsync(checkoutId!, true);
+                var userId = await _paymentRepository.GetAppUserIdByPaymentId(checkoutId!);
                 var paidUser = await _user.FindByIdAsync(userId);
                 if (paidUser == null)
                 {
                     return BadRequest("No user found.");
                 }
-
                 string body = @"
                             <html>
                             <head>
@@ -117,42 +119,42 @@ namespace SeleafAPI.Controllers
 
     public class YocoWebhookEvent
     {
-        public string Id { get; set; }
-        public string Type { get; set; }
+        public string? Id { get; set; }
+        public string? Type { get; set; }
         public DateTime CreatedDate { get; set; }
-        public YocoPayload Payload { get; set; }
+        public YocoPayload? Payload { get; set; }
     }
 
     public class YocoPayload
     {
-        public string Id { get; set; }
-        public string Type { get; set; }
+        public string? Id { get; set; }
+        public string? Type { get; set; }
         public DateTime CreatedDate { get; set; }
         public int Amount { get; set; }
-        public string Currency { get; set; }
-        public YocoPaymentMethodDetails PaymentMethodDetails { get; set; }
-        public string Status { get; set; }
-        public string Mode { get; set; }
-        public YocoMetadata Metadata { get; set; }
+        public string? Currency { get; set; }
+        public YocoPaymentMethodDetails? PaymentMethodDetails { get; set; }
+        public string? Status { get; set; }
+        public string? Mode { get; set; }
+        public YocoMetadata? Metadata { get; set; }
     }
 
     public class YocoPaymentMethodDetails
     {
-        public string Type { get; set; }
-        public YocoCardDetails Card { get; set; }
+        public string? Type { get; set; }
+        public YocoCardDetails? Card { get; set; }
     }
 
     public class YocoCardDetails
     {
         public int ExpiryMonth { get; set; }
         public int ExpiryYear { get; set; }
-        public string MaskedCard { get; set; }
-        public string Scheme { get; set; }
+        public string? MaskedCard { get; set; }
+        public string? Scheme { get; set; }
     }
 
     public class YocoMetadata
     {
-        public string CheckoutId { get; set; }
+        public string? CheckoutId { get; set; }
     }
 
 

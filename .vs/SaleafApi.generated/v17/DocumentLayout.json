@@ -1,0 +1,326 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\repositories\\paymentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:repositories\\paymentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\interfaces\\ipayment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:interfaces\\ipayment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\repositories\\donationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:repositories\\donationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\repositories\\passwordresetrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:repositories\\passwordresetrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\repositories\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:repositories\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\controllers\\donationstypecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:controllers\\donationstypecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\controllers\\donationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:controllers\\donationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\controllers\\directorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:controllers\\directorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\interfaces\\idonation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:interfaces\\idonation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\interfaces\\idirector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:interfaces\\idirector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\models\\dto\\donationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:models\\dto\\donationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\models\\dto\\donationtypedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:models\\dto\\donationtypedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\repositories\\rolerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:repositories\\rolerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\interfaces\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:interfaces\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|c:\\users\\binam\\downloads\\workintegreted\\saleafapi\\controllers\\webhookcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB283FDE-7208-4DBA-8ACA-5D7087677A5A}|SeleafAPI.csproj|solutionrelative:controllers\\webhookcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PasswordResetRepository.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\PasswordResetRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\PasswordResetRepository.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\PasswordResetRepository.cs",
+              "RelativeToolTip": "Repositories\\PasswordResetRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T22:48:50.987Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DonationRepository.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\DonationRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\DonationRepository.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\DonationRepository.cs",
+              "RelativeToolTip": "Repositories\\DonationRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:45:31.79Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DonationController.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\DonationController.cs",
+              "RelativeDocumentMoniker": "Controllers\\DonationController.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\DonationController.cs",
+              "RelativeToolTip": "Controllers\\DonationController.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAACQAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:44:42.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DirectorController.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\DirectorController.cs",
+              "RelativeDocumentMoniker": "Controllers\\DirectorController.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\DirectorController.cs",
+              "RelativeToolTip": "Controllers\\DirectorController.cs",
+              "ViewState": "AQIAADAAAAAAAAAAAAAUwD8AAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:44:39.215Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DonationsTypeController.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\DonationsTypeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\DonationsTypeController.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\DonationsTypeController.cs",
+              "RelativeToolTip": "Controllers\\DonationsTypeController.cs",
+              "ViewState": "AQIAAB8AAAAAAAAAAAAgwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:46:29.381Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PaymentRepository.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\PaymentRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\PaymentRepository.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\PaymentRepository.cs",
+              "RelativeToolTip": "Repositories\\PaymentRepository.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAADwvx0AAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:49:18.753Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IPayment.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IPayment.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IPayment.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IPayment.cs",
+              "RelativeToolTip": "Interfaces\\IPayment.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwBAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:49:11.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AQIAAMAAAAAAAAAAAAAAwIsAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:44:33.051Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IDonation.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IDonation.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IDonation.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IDonation.cs",
+              "RelativeToolTip": "Interfaces\\IDonation.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwwAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:49:06.312Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EmailService.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\EmailService.cs",
+              "RelativeDocumentMoniker": "Repositories\\EmailService.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\EmailService.cs",
+              "RelativeToolTip": "Repositories\\EmailService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:47:39.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IDirector.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IDirector.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IDirector.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IDirector.cs",
+              "RelativeToolTip": "Interfaces\\IDirector.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T22:46:23.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "DonationDTO.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Models\\DTO\\DonationDTO.cs",
+              "RelativeDocumentMoniker": "Models\\DTO\\DonationDTO.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Models\\DTO\\DonationDTO.cs",
+              "RelativeToolTip": "Models\\DTO\\DonationDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T22:46:13.1Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IUserRepository.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IUserRepository.cs",
+              "RelativeToolTip": "Interfaces\\IUserRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:49:10.657Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "DonationTypeDTO.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Models\\DTO\\DonationTypeDTO.cs",
+              "RelativeDocumentMoniker": "Models\\DTO\\DonationTypeDTO.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Models\\DTO\\DonationTypeDTO.cs",
+              "RelativeToolTip": "Models\\DTO\\DonationTypeDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvxEAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T22:36:50.361Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IRepository.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IRepository.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Interfaces\\IRepository.cs",
+              "RelativeToolTip": "Interfaces\\IRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:49:12.367Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:44:19.819Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "RoleRepository.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\RoleRepository.cs",
+              "RelativeDocumentMoniker": "Repositories\\RoleRepository.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Repositories\\RoleRepository.cs",
+              "RelativeToolTip": "Repositories\\RoleRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:55:31.504Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "WebHookController.cs",
+              "DocumentMoniker": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\WebHookController.cs",
+              "RelativeDocumentMoniker": "Controllers\\WebHookController.cs",
+              "ToolTip": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\Controllers\\WebHookController.cs",
+              "RelativeToolTip": "Controllers\\WebHookController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-27T21:46:38.863Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

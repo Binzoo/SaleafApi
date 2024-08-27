@@ -12878,24 +12878,27 @@
     ]
   },
   "packageFolders": {
-    "/Users/binamrathapa/.nuget/packages/": {}
+    "C:\\Users\\binam\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj",
+      "projectUniqueName": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
       "projectName": "SeleafAPI",
-      "projectPath": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj",
-      "packagesPath": "/Users/binamrathapa/.nuget/packages/",
-      "outputPath": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/",
+      "projectPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
+      "packagesPath": "C:\\Users\\binam\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/binamrathapa/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\binam\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -12983,7 +12986,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

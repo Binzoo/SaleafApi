@@ -16,6 +16,6 @@ namespace SeleafAPI.Models
         public string? DonationsDescription { get; set; }
         public int DonationAmount { get; set; }
         public bool isEnable { get; set; } = true;
-        public ICollection<Donation> Donations { get; set; }
+        public ICollection<Donation>? Donations { get; set; }
     }
 }

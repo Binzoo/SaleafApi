@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SaleafApi.Interfaces;
+using SaleafApi.Repositories;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Repositories;
@@ -23,7 +25,10 @@ var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpClient();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;    
+});
 
 builder.Services.AddCors(options =>
 {
@@ -127,14 +132,14 @@ var emailConfig = builder.Configuration
     .GetSection("EmailConfiguration")
     .Get<EmailConfiguration>();
 
-builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(emailConfig!);
 builder.Services.AddTransient<IEmailSender, EmailService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPayment, PaymentRepository>();
-
+builder.Services.AddScoped<IDonation, DonationRepository>();
 
 
 var app = builder.Build();

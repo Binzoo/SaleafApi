@@ -23,16 +23,8 @@ namespace SeleafAPI.Repositories
 
         }
 
-        public async Task<Donation> CreateDonationAsync(Donation donation)
-        {
-            _context.Donations.Add(donation);
-            await _context.SaveChangesAsync();
-            return donation;
-        }
-
         public async Task<string> InitiateCheckoutAsync(Donation donation, string cancelUrl, string successUrl, string failureUrl)
         {
-            donation = await CreateDonationAsync(donation);
 
             var builder = WebApplication.CreateBuilder();
             var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
@@ -91,28 +83,6 @@ namespace SeleafAPI.Repositories
         }
 
 
-        public async Task<Donation> GetDonationByPaymentIdAsync(string paymentId)
-        {
-            return await _context.Donations
-                .Include(d => d.AppUser)
-                .Include(d => d.DonationType)
-                .FirstOrDefaultAsync(d => d.PaymentId == paymentId);
-        }
-
-        public async Task UpdateDonationStatusAsync(string paymentId, bool isPaid)
-        {
-            var donation = await GetDonationByPaymentIdAsync(paymentId);
-            if (donation != null)
-            {
-                donation.IsPaid = isPaid;
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task<IEnumerable<DonationType>> GetDonationTypesAsync()
-        {
-            return await _context.DonationTypes.ToListAsync();
-        }
 
 
         public async Task<string> GetAppUserIdByPaymentId(string paymentId)
@@ -121,10 +91,10 @@ namespace SeleafAPI.Repositories
 
             if (donation == null)
             {
-                return null;
+                return null!;
             }
 
-            return donation.AppUserId;
+            return donation.AppUserId!;
         }
     }
 
