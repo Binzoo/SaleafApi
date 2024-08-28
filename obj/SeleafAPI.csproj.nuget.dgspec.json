@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj": {}
+    "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj": {}
   },
   "projects": {
-    "c:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj": {
+    "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
+        "projectUniqueName": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
         "projectName": "SeleafAPI",
-        "projectPath": "c:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
+        "projectPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
         "packagesPath": "C:\\Users\\binam\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\obj\\",
+        "outputPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\binam\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -85,6 +85,10 @@
             "NETCore.MailKit": {
               "target": "Package",
               "version": "[2.1.0, )"
+            },
+            "PdfSharpCore": {
+              "target": "Package",
+              "version": "[1.3.65, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -13,5 +13,6 @@ namespace SeleafAPI.Models.DTO
         public string? CancelUrl { get; set; }  // URL to redirect if the payment is canceled
         public string? SuccessUrl { get; set; }  // URL to redirect if the payment is successful
         public string? FailureUrl { get; set; }  // URL to redirect if the payment fails
+        public bool isAnonymous { get; set; } = false;
     }
 }

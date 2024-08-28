@@ -35,7 +35,7 @@ namespace SeleafAPI.Controllers
                 AppUserId = userId,
                 DonationTypeId = request.DonationTypeId,
                 IsPaid = false,
-                isAnonymous = true
+                isAnonymous = request.isAnonymous
             };
 
             try

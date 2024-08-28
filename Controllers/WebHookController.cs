@@ -17,14 +17,16 @@ namespace SeleafAPI.Controllers
         private readonly IUserRepository _user;
         private readonly IPayment _paymentRepository;
 
+        private readonly IPdf _pdf;
 
 
-        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository)
+        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository, IPdf pdf)
         {
             _donationRepository = donationRepository;
             _emailService = emailService;
             _user = user;
             _paymentRepository = paymentRepository;
+            _pdf = pdf;
         }
 
         // POST: api/webhook/yoco
@@ -104,17 +106,15 @@ namespace SeleafAPI.Controllers
                             </body>
                             </html>";
 
-                await _emailService.SendEmailAsync(paidUser.Email!, "SALEAF", body);
+                var pdfStream = _pdf.GetPdf();
+                await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream);
             }
             else
             {
-                // Handle other event types if necessary
                 return BadRequest($"Unhandled event type: {webhookEvent.Type}");
             }
             return Ok();
         }
-
-
     }
 
     public class YocoWebhookEvent

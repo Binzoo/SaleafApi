@@ -27,7 +27,7 @@ var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
 builder.Services.AddHttpClient();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;    
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddCors(options =>
@@ -140,6 +140,7 @@ builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPayment, PaymentRepository>();
 builder.Services.AddScoped<IDonation, DonationRepository>();
+builder.Services.AddScoped<IPdf, PdfRepository>();
 
 
 var app = builder.Build();

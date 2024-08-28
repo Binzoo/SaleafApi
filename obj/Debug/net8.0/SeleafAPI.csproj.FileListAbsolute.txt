@@ -1330,3 +1330,9 @@ C:\Users\binam\Downloads\WorkIntegreted\SaleafApi\obj\Debug\net8.0\refint\Seleaf
 C:\Users\binam\Downloads\WorkIntegreted\SaleafApi\obj\Debug\net8.0\SeleafAPI.pdb
 C:\Users\binam\Downloads\WorkIntegreted\SaleafApi\obj\Debug\net8.0\SeleafAPI.genruntimeconfig.cache
 C:\Users\binam\Downloads\WorkIntegreted\SaleafApi\obj\Debug\net8.0\ref\SeleafAPI.dll
+c:\Users\binam\Downloads\WorkIntegreted\SaleafApi\bin\Debug\net8.0\SeleafAPI.staticwebassets.runtime.json
+c:\Users\binam\Downloads\WorkIntegreted\SaleafApi\bin\Debug\net8.0\PdfSharpCore.dll
+c:\Users\binam\Downloads\WorkIntegreted\SaleafApi\bin\Debug\net8.0\ICSharpCode.SharpZipLib.dll
+c:\Users\binam\Downloads\WorkIntegreted\SaleafApi\bin\Debug\net8.0\SixLabors.Fonts.dll
+c:\Users\binam\Downloads\WorkIntegreted\SaleafApi\bin\Debug\net8.0\SixLabors.ImageSharp.dll
+c:\Users\binam\Downloads\WorkIntegreted\SaleafApi\bin\Debug\net8.0\de\PdfSharpCore.resources.dll

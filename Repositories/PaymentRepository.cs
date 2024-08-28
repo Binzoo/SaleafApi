@@ -29,7 +29,6 @@ namespace SeleafAPI.Repositories
             var builder = WebApplication.CreateBuilder();
             var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
 
-
             var checkoutData = new
             {
                 amount = donation.Amount,

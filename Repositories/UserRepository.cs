@@ -34,6 +34,5 @@ namespace SeleafAPI.Repositories
 
         public Task<IdentityResult> UpdateAsync(AppUser user) => _userManager.UpdateAsync(user);
 
-
     }
 }

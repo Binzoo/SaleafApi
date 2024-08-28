@@ -16,6 +16,5 @@ namespace SeleafAPI.Repositories
         public Task<bool> RoleExistsAsync(string role) => _roleManager.RoleExistsAsync(role);
 
         public Task<IdentityResult> CreateRoleAsync(IdentityRole role) => _roleManager.CreateAsync(role);
-
     }
 }
