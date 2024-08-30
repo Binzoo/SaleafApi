@@ -66,7 +66,5 @@ namespace SeleafAPI.Controllers
             await _donationType.UpdateAsync(donation);
             return Ok($"Donation Type {model.DonationsName} has been updated successfully.");
         }
-
-
     }
 }
