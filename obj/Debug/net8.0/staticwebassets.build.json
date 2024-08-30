@@ -1,11 +1,39 @@
 {
   "Version": 1,
-  "Hash": "6zK0dGw91RBZw6ORHbpWxDW000NHcS3UyEeMvfT1LH0=",
+  "Hash": "iwDCGDBAS+UszUU3IXwtrus69cB+TV8HOMuo9GXagc0=",
   "Source": "SeleafAPI",
   "BasePath": "_content/SeleafAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "SeleafAPI\\wwwroot",
+      "Source": "SeleafAPI",
+      "ContentRoot": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\wwwroot\\",
+      "BasePath": "_content/SeleafAPI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\wwwroot\\SALEAF - Section18A Sample.pdf",
+      "SourceId": "SeleafAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\wwwroot\\",
+      "BasePath": "_content/SeleafAPI",
+      "RelativePath": "SALEAF - Section18A Sample.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\SALEAF - Section18A Sample.pdf"
+    }
+  ]
 }

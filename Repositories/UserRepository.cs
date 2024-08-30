@@ -13,11 +13,11 @@ namespace SeleafAPI.Repositories
             _userManager = userManager;
         }
 
-        public Task<AppUser> FindByNameAsync(string username) => _userManager.FindByNameAsync(username);
+        public Task<AppUser> FindByNameAsync(string username) => _userManager.FindByNameAsync(username)!;
 
-        public Task<AppUser> FindByIdAsync(string id) => _userManager.FindByIdAsync(id);
+        public Task<AppUser> FindByIdAsync(string id) => _userManager.FindByIdAsync(id)!;
 
-        public Task<AppUser> FindByEmailAsync(string email) => _userManager.FindByEmailAsync(email);
+        public Task<AppUser> FindByEmailAsync(string email) => _userManager.FindByEmailAsync(email)!;
 
         public Task<IdentityResult> CreateAsync(AppUser user, string password) => _userManager.CreateAsync(user, password);
 
@@ -33,7 +33,6 @@ namespace SeleafAPI.Repositories
         public Task<bool> CheckPasswordAsync(AppUser user, string password) => _userManager.CheckPasswordAsync(user, password);
 
         public Task<IdentityResult> UpdateAsync(AppUser user) => _userManager.UpdateAsync(user);
-
 
     }
 }

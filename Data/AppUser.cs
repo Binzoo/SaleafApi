@@ -10,7 +10,7 @@ namespace SeleafAPI.Data
         public bool isStudent { get; set; }
         public bool isVerified { get; set; }
 
-        public ICollection<Donation> Donations { get; set; }
+        public ICollection<Donation>? Donations { get; set; }
     }
 }
 

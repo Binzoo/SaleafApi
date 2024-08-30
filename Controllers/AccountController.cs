@@ -120,11 +120,11 @@ namespace SeleafAPI.Controllers
 
                 // Create claims for the JWT
                 var authClaims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // Username claim
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
-                new Claim("userId", user.Id), // User ID claim
-            };
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // Username claim
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
+                    new Claim("userId", user.Id), // User ID claim
+                };
 
                 // Add distinct roles to the claims
                 authClaims.AddRange(distinctRoles.Select(role => new Claim(ClaimTypes.Role, role)));
@@ -132,6 +132,7 @@ namespace SeleafAPI.Controllers
                 // Generate JWT token
                 var token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],
+                    audience: _configuration["Jwt:Audience"], // Optional, if you have an audience
                     expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(
@@ -139,10 +140,12 @@ namespace SeleafAPI.Controllers
                         SecurityAlgorithms.HmacSha256)
                 );
 
+
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
             }
             return Unauthorized();
         }
+
 
         [HttpPost("add-role")]
         public async Task<IActionResult> AddRole([FromBody] string role)
@@ -180,7 +183,7 @@ namespace SeleafAPI.Controllers
             {
                 if (user.isStudent && user.isVerified)
                 {
-                    await _emailService.SendEmailAsync(user.Email!, "Verified at Salef as a student.", "Congratulation you have been verify as a studnet at ");
+                    await _emailService.SendEmailAsync(user.Email!, "Verified at Saleaf as a student.", "Congratulation you have been verify as a studnet at Saleaf.");
                 }
                 return Ok(new { message = "Role assigned successfully" });
             }
@@ -235,13 +238,13 @@ namespace SeleafAPI.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> RestPassword([FromBody] ResetPasswordDTO model)
         {
-            var user = await _userRepository.FindByEmailAsync(model.Email);
+            var user = await _userRepository.FindByEmailAsync(model.Email!);
             if (user == null)
             {
                 return BadRequest("User not found");
             }
 
-            var isValidCode = await ValidateResetCodeAsync(user.Id, model.Code);
+            var isValidCode = await ValidateResetCodeAsync(user.Id, model.Code!);
             if (!isValidCode)
             {
                 return BadRequest("Invalid or Expired Code");
@@ -253,7 +256,7 @@ namespace SeleafAPI.Controllers
                 return BadRequest(removePasswordResult.Errors);
             }
 
-            var addPasswordResult = await _userRepository.AddPasswordAsync(user, model.NewPassword);
+            var addPasswordResult = await _userRepository.AddPasswordAsync(user, model.NewPassword!);
             if (!addPasswordResult.Succeeded)
             {
                 return BadRequest(addPasswordResult.Errors);
