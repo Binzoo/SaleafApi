@@ -20,7 +20,6 @@ namespace SeleafAPI.Repositories
         {
             _context = context;
             _httpClient = httpClient;
-
         }
 
         public async Task<string> InitiateCheckoutAsync(Donation donation, string cancelUrl, string successUrl, string failureUrl)

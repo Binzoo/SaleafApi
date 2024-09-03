@@ -45,7 +45,6 @@ namespace SeleafAPI.Controllers
                 // Create a new user
                 var user = new AppUser
                 {
-                    UserName = model.Username,
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
@@ -74,11 +73,11 @@ namespace SeleafAPI.Controllers
 
                     // Create claims for the JWT
                     var authClaims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // Username claim
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
-                new Claim("userId", user.Id), // User ID claim
-            };
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email!), // Email claim
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
+                            new Claim("userId", user.Id), // User ID claim
+                        };
 
                     // Add distinct roles to the claims
                     authClaims.AddRange(distinctRoles.Select(role => new Claim(ClaimTypes.Role, role)));
@@ -112,7 +111,7 @@ namespace SeleafAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
-            var user = await _userRepository.FindByNameAsync(model.Username);
+            var user = await _userRepository.FindByEmailAsync(model.Email);
             if (user != null && await _userRepository.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await _userRepository.GetRolesAsync(user);
@@ -121,7 +120,7 @@ namespace SeleafAPI.Controllers
                 // Create claims for the JWT
                 var authClaims = new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName!), // Username claim
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email!), // Username claim
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
                     new Claim("userId", user.Id), // User ID claim
                 };
@@ -167,7 +166,7 @@ namespace SeleafAPI.Controllers
         [HttpPost("assign-role")]
         public async Task<IActionResult> AssignRole([FromBody] UserRoleDTO model)
         {
-            var user = await _userRepository.FindByNameAsync(model.Username);
+            var user = await _userRepository.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 return BadRequest("User not found");
@@ -199,7 +198,6 @@ namespace SeleafAPI.Controllers
                 Id = u.Id,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-                UserName = u.UserName!,
                 Email = u.Email!,
                 IsStudent = u.isStudent,
                 IsVerified = u.isVerified
