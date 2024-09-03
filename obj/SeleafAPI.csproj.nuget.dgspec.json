@@ -1,28 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj": {}
+    "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj": {
+    "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
+        "projectUniqueName": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj",
         "projectName": "SeleafAPI",
-        "projectPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\SeleafAPI.csproj",
-        "packagesPath": "C:\\Users\\binam\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\obj\\",
+        "projectPath": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj",
+        "packagesPath": "/Users/binamrathapa/.nuget/packages/",
+        "outputPath": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\binam\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/binamrathapa/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -114,7 +111,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
