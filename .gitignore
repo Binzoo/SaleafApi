@@ -7,3 +7,4 @@ obj/
 *.sln.docstates
 .vscode/
 .env
+.SaleafApi.generated.sln
