@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SaleafApi.Data;
 using SeleafAPI.Data;
 
 namespace SeleafAPI.Interfaces
@@ -16,5 +17,10 @@ namespace SeleafAPI.Interfaces
         Task<bool> CheckPasswordAsync(AppUser user, string password);
         Task<IdentityResult> UpdateAsync(AppUser user);
         Task<AppUser> FindByIdAsync(string id);
+        Task<RefreshToken?> GetRefreshTokenAsync(string token);
+        Task UpdateRefreshTokenAsync(RefreshToken token);
+
+        Task SaveRefreshTokenAsync(RefreshToken token);
+
     }
 }

@@ -8,6 +8,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using SeleafAPI.Interfaces;
+using System.Security.Cryptography;
+using SaleafApi.Models.DTO;
+using SaleafApi.Data;
 
 namespace SeleafAPI.Controllers
 {
@@ -41,7 +44,6 @@ namespace SeleafAPI.Controllers
                 {
                     return BadRequest("Email already exists.");
                 }
-
                 // Create a new user
                 var user = new AppUser
                 {
@@ -50,6 +52,7 @@ namespace SeleafAPI.Controllers
                     LastName = model.LastName,
                     isStudent = model.isStudent
                 };
+                user.UserName = model.Email;
 
                 // Attempt to create the user
                 var result = await _userRepository.CreateAsync(user, model.Password);
@@ -106,8 +109,6 @@ namespace SeleafAPI.Controllers
             }
         }
 
-
-
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
@@ -117,19 +118,19 @@ namespace SeleafAPI.Controllers
                 var userRoles = await _userRepository.GetRolesAsync(user);
                 var distinctRoles = userRoles.Distinct().ToList();
 
-                // Create claims for the JWT
+                // Create JWT token claims
                 var authClaims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email!), // Username claim
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
-                    new Claim("userId", user.Id), // User ID claim
-                };
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, user.Email!), // Username claim
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
+                        new Claim("userId", user.Id), // User ID claim
+                    };
 
                 // Add distinct roles to the claims
                 authClaims.AddRange(distinctRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-                // Generate JWT token
-                var token = new JwtSecurityToken(
+                // Generate JWT access token
+                var accessToken = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],
                     audience: _configuration["Jwt:Audience"], // Optional, if you have an audience
                     expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
@@ -139,10 +140,79 @@ namespace SeleafAPI.Controllers
                         SecurityAlgorithms.HmacSha256)
                 );
 
+                // Generate refresh token
+                var refreshToken = GenerateRefreshToken();
 
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+                // Save refresh token to the database
+                var refreshTokenEntry = new RefreshToken
+                {
+                    Token = refreshToken,
+                    ExpiryDate = DateTime.Now.AddDays(7), // Refresh token expires after 7 days
+                    UserId = user.Id,
+                    IsRevoked = false
+                };
+
+                await _userRepository.SaveRefreshTokenAsync(refreshTokenEntry);
+
+                // Return both access token and refresh token
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(accessToken),
+                    refreshToken = refreshToken
+                });
             }
             return Unauthorized();
+        }
+
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequestDTO model)
+        {
+            // Validate the refresh token
+            var storedToken = await _userRepository.GetRefreshTokenAsync(model.RefreshToken);
+            if (storedToken == null || storedToken.ExpiryDate <= DateTime.UtcNow || storedToken.IsRevoked)
+            {
+                return Unauthorized("Invalid or expired refresh token");
+            }
+
+            // Find the user associated with the refresh token
+            var user = await _userRepository.FindByIdAsync(storedToken.UserId);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
+            // Generate new access token
+            var authClaims = new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("userId", user.Id),
+                };
+
+            var userRoles = await _userRepository.GetRolesAsync(user);
+            authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            var accessToken = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
+                    SecurityAlgorithms.HmacSha256)
+            );
+
+            // Optionally, issue a new refresh token
+            var newRefreshToken = GenerateRefreshToken();
+            storedToken.Token = newRefreshToken;
+            storedToken.ExpiryDate = DateTime.Now.AddDays(7);
+            await _userRepository.UpdateRefreshTokenAsync(storedToken);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(accessToken),
+                refreshToken = newRefreshToken
+            });
         }
 
 
@@ -280,6 +350,17 @@ namespace SeleafAPI.Controllers
             string message = $"Your password reset code is: {code}. This code will expire in 15 minutes.";
             await _emailService.SendEmailAsync(email, subject, message);
         }
+
+        private string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+                return Convert.ToBase64String(randomBytes);
+            }
+        }
+
     }
 
 }

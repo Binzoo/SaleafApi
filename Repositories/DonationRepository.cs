@@ -21,7 +21,6 @@ namespace SaleafApi.Repositories
         {
             var donations = await _context.Donations
                 .Include(d => d.AppUser)
-                .Include(d => d.DonationType)
                 .Where(d => d.isAnonymous == true)
                 .ToListAsync();
 
@@ -39,7 +38,6 @@ namespace SaleafApi.Repositories
         {
             return await _context.Donations
                 .Include(d => d.AppUser)
-                .Include(d => d.DonationType)
                 .FirstOrDefaultAsync(d => d.PaymentId == paymentId);
         }
 

@@ -13030,11 +13030,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj",
+      "projectUniqueName": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/SeleafAPI.csproj",
       "projectName": "SeleafAPI",
-      "projectPath": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/SeleafAPI.csproj",
+      "projectPath": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/SeleafAPI.csproj",
       "packagesPath": "/Users/binamrathapa/.nuget/packages/",
-      "outputPath": "/Users/binamrathapa/Desktop/XBCAD7319-main/SeleafAPI/SeleafAPI/obj/",
+      "outputPath": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/binamrathapa/.nuget/NuGet/NuGet.Config"

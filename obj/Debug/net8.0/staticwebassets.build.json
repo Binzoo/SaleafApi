@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "iwDCGDBAS+UszUU3IXwtrus69cB+TV8HOMuo9GXagc0=",
+  "Hash": "dpW5oPXAsbdmw04veJg1n+vIL2tJ1S1OpQiDJOzYbNU=",
   "Source": "SeleafAPI",
   "BasePath": "_content/SeleafAPI",
   "Mode": "Default",
@@ -8,19 +8,19 @@
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [
     {
-      "Name": "SeleafAPI\\wwwroot",
+      "Name": "SeleafAPI/wwwroot",
       "Source": "SeleafAPI",
-      "ContentRoot": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\wwwroot\\",
+      "ContentRoot": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/wwwroot/",
       "BasePath": "_content/SeleafAPI",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\wwwroot\\SALEAF - Section18A Sample.pdf",
+      "Identity": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/wwwroot/SALEAF - Section18A Sample.pdf",
       "SourceId": "SeleafAPI",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\binam\\Downloads\\WorkIntegreted\\SaleafApi\\wwwroot\\",
+      "ContentRoot": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/wwwroot/",
       "BasePath": "_content/SeleafAPI",
       "RelativePath": "SALEAF - Section18A Sample.pdf",
       "AssetKind": "All",
@@ -33,7 +33,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\SALEAF - Section18A Sample.pdf"
+      "OriginalItemSpec": "wwwroot/SALEAF - Section18A Sample.pdf"
     }
   ]
 }

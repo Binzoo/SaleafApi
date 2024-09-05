@@ -23,8 +23,5 @@ namespace SeleafAPI.Models
 
         public string? AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
-
-        public int? DonationTypeId { get; set; }
-        public DonationType? DonationType { get; set; }
     }
 }

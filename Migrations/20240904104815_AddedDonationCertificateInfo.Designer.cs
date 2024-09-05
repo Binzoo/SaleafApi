@@ -12,8 +12,8 @@ using SeleafAPI.Data;
 namespace SeleafAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240821135121_UpdatedMigratino")]
-    partial class UpdatedMigratino
+    [Migration("20240904104815_AddedDonationCertificateInfo")]
+    partial class AddedDonationCertificateInfo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,65 @@ namespace SeleafAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SaleafApi.Data.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("SaleafApi.Models.DonorCertificateInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IdentityNoOrCompanyRegNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IncomeTaxNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("DonorCertificateInfos");
+                });
+
             modelBuilder.Entity("SeleafAPI.Data.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -299,7 +358,6 @@ namespace SeleafAPI.Migrations
                         .HasColumnType("float(18)");
 
                     b.Property<string>("AppUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -309,45 +367,20 @@ namespace SeleafAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DonationTypeId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<string>("PaymentId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isAnonymous")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("DonationTypeId");
-
                     b.ToTable("Donations");
-                });
-
-            modelBuilder.Entity("SeleafAPI.Models.DonationType", b =>
-                {
-                    b.Property<int>("DonationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DonationId"));
-
-                    b.Property<int>("DonationAmount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DonationsDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DonationsName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DonationId");
-
-                    b.ToTable("DonationTypes");
                 });
 
             modelBuilder.Entity("SeleafAPI.Models.Event", b =>
@@ -426,31 +459,36 @@ namespace SeleafAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SaleafApi.Data.RefreshToken", b =>
+                {
+                    b.HasOne("SeleafAPI.Data.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SaleafApi.Models.DonorCertificateInfo", b =>
+                {
+                    b.HasOne("SeleafAPI.Data.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("SeleafAPI.Models.Donation", b =>
                 {
                     b.HasOne("SeleafAPI.Data.AppUser", "AppUser")
                         .WithMany("Donations")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SeleafAPI.Models.DonationType", "DonationType")
-                        .WithMany("Donations")
-                        .HasForeignKey("DonationTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AppUserId");
 
                     b.Navigation("AppUser");
-
-                    b.Navigation("DonationType");
                 });
 
             modelBuilder.Entity("SeleafAPI.Data.AppUser", b =>
-                {
-                    b.Navigation("Donations");
-                });
-
-            modelBuilder.Entity("SeleafAPI.Models.DonationType", b =>
                 {
                     b.Navigation("Donations");
                 });

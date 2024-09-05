@@ -33,7 +33,6 @@ namespace SeleafAPI.Controllers
                 Amount = request.Amount,
                 Currency = request.Currency,
                 AppUserId = userId,
-                DonationTypeId = request.DonationTypeId,
                 IsPaid = false,
                 isAnonymous = request.isAnonymous
             };
@@ -62,7 +61,6 @@ namespace SeleafAPI.Controllers
                 UserName = d.AppUser?.UserName ?? "Unknown",
                 FirstName = d.AppUser?.FirstName ?? "Unknown",
                 LastName = d.AppUser?.LastName ?? "Unknown",
-                DonationTypeName = d.DonationType?.DonationsName ?? "No Type",
                 d.PaymentId,
                 d.Amount,
                 d.Currency,

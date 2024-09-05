@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SeleafAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedMigratino : Migration
+    public partial class AddedRefereshToken : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,21 +68,6 @@ namespace SeleafAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Directors", x => x.DirectorId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DonationTypes",
-                columns: table => new
-                {
-                    DonationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DonationsName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DonationsDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DonationAmount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DonationTypes", x => x.DonationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -230,11 +215,11 @@ namespace SeleafAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<double>(type: "float(18)", precision: 18, scale: 2, nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DonationTypeId = table.Column<int>(type: "int", nullable: false)
+                    isAnonymous = table.Column<bool>(type: "bit", nullable: false),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -243,13 +228,28 @@ namespace SeleafAPI.Migrations
                         name: "FK_Donations_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Donations_DonationTypes_DonationTypeId",
-                        column: x => x.DonationTypeId,
-                        principalTable: "DonationTypes",
-                        principalColumn: "DonationId",
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -298,9 +298,9 @@ namespace SeleafAPI.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Donations_DonationTypeId",
-                table: "Donations",
-                column: "DonationTypeId");
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -334,13 +334,13 @@ namespace SeleafAPI.Migrations
                 name: "PasswordResetsCodes");
 
             migrationBuilder.DropTable(
+                name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "DonationTypes");
         }
     }
 }

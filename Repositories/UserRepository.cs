@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using SaleafApi.Data;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 
@@ -7,10 +9,12 @@ namespace SeleafAPI.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly AppDbContext _context;
 
-        public UserRepository(UserManager<AppUser> userManager)
+        public UserRepository(UserManager<AppUser> userManager, AppDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         public Task<AppUser> FindByNameAsync(string username) => _userManager.FindByNameAsync(username)!;
@@ -33,6 +37,23 @@ namespace SeleafAPI.Repositories
         public Task<bool> CheckPasswordAsync(AppUser user, string password) => _userManager.CheckPasswordAsync(user, password);
 
         public Task<IdentityResult> UpdateAsync(AppUser user) => _userManager.UpdateAsync(user);
+
+        public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
+        {
+            return await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == token);
+        }
+
+        public async Task UpdateRefreshTokenAsync(RefreshToken token)
+        {
+            _context.RefreshTokens.Update(token);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveRefreshTokenAsync(RefreshToken token)
+        {
+            await _context.RefreshTokens.AddAsync(token);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

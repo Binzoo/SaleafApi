@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SaleafApi.Interfaces;
+using SaleafApi.Models;
+using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 
 namespace SeleafAPI.Controllers
@@ -16,17 +19,19 @@ namespace SeleafAPI.Controllers
         private readonly IEmailSender _emailService;
         private readonly IUserRepository _user;
         private readonly IPayment _paymentRepository;
-
         private readonly IPdf _pdf;
+        private readonly AppDbContext _donorCertificateInfo;
 
-
-        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository, IPdf pdf)
+        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository, IPdf pdf, AppDbContext donorCertificateInfo)
         {
             _donationRepository = donationRepository;
             _emailService = emailService;
             _user = user;
             _paymentRepository = paymentRepository;
             _pdf = pdf;
+            _donationRepository = donationRepository;
+            _donorCertificateInfo = donorCertificateInfo;
+
         }
 
         // POST: api/webhook/yoco
@@ -106,7 +111,24 @@ namespace SeleafAPI.Controllers
                             </body>
                             </html>";
 
-                var pdfStream = _pdf.GetPdf();
+                var certificateInfo = await _donorCertificateInfo.DonorCertificateInfos.FirstOrDefaultAsync(e => e.AppUserId == userId);
+                var donationInfo = await _donationRepository.GetDonationByPaymentIdAsync(checkoutId!);
+
+                AllDonorCertificateInfo allDonorCertificate = new AllDonorCertificateInfo
+                {
+                    RefNo = donationInfo.Id,
+                    FirstName = paidUser.FirstName,
+                    LastName = paidUser.LastName,
+                    IdentityNoOrCompanyRegNo = certificateInfo!.IdentityNoOrCompanyRegNo,
+                    IncomeTaxNumber = certificateInfo.IncomeTaxNumber,
+                    Address = certificateInfo.Address,
+                    PhoneNumber = certificateInfo.PhoneNumber,
+                    Amount = donationInfo.Amount,
+                    Email = paidUser.Email!,
+                    DateofReceiptofDonation = donationInfo.CreatedAt
+                };
+
+                var pdfStream = _pdf.GetPdf(allDonorCertificate);
                 await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream);
             }
             else
@@ -115,6 +137,20 @@ namespace SeleafAPI.Controllers
             }
             return Ok();
         }
+    }
+
+    public class AllDonorCertificateInfo
+    {
+        public int RefNo { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? IdentityNoOrCompanyRegNo { get; set; }
+        public string? IncomeTaxNumber { get; set; }
+        public string? Address { get; set; }
+        public string? PhoneNumber { get; set; }
+        public double Amount { get; set; }
+        public string? Email { get; set; }
+        public DateTime DateofReceiptofDonation { get; set; }
     }
 
     public class YocoWebhookEvent
