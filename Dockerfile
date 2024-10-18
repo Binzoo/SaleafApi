@@ -16,9 +16,6 @@ WORKDIR /app
 # Copy the output from the build stage
 COPY --from=build-env /app/out .
 
-# Copy the .env file
-COPY .env .env
-
 # Expose the port
 EXPOSE 80
 
