@@ -11,6 +11,11 @@ using SaleafApi.Repositories;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Repositories;
+using Amazon.S3;
+using Amazon.Runtime;
+
+
+
 
 DotNetEnv.Env.Load();
 
@@ -21,6 +26,31 @@ var jwtKey = builder.Configuration["Jwt:Key"];
 var connectionString = builder.Configuration["ConnectionStrings:Default"];
 var emailPassword = builder.Configuration["EmailConfiguration:Password"];
 var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
+// Retrieve AWS credentials and region from environment variables
+var awsAccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+var awsSecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+var awsRegion = Environment.GetEnvironmentVariable("AWS_REGION");
+
+// Register the AmazonS3 service
+builder.Services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions
+{
+    Credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey),
+    Region = Amazon.RegionEndpoint.GetBySystemName(awsRegion)
+});
+
+builder.Services.AddAWSService<IAmazonS3>();
+
+// Register the S3Service
+builder.Services.AddScoped<S3Service>(provider =>
+{
+    var s3Client = provider.GetRequiredService<IAmazonS3>();
+    var awsBucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME"); // Retrieve bucket name
+    return new S3Service(s3Client, awsBucketName); // Return a new instance of S3Service
+});
+
+
+
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,6 +59,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -140,6 +172,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPayment, PaymentRepository>();
 builder.Services.AddScoped<IDonation, DonationRepository>();
 builder.Services.AddScoped<IPdf, PdfRepository>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 
 
 var app = builder.Build();

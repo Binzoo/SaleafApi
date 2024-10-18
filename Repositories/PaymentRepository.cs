@@ -81,8 +81,6 @@ namespace SeleafAPI.Repositories
         }
 
 
-
-
         public async Task<string> GetAppUserIdByPaymentId(string paymentId)
         {
             var donation = await _context.Donations.FirstOrDefaultAsync(e => e.PaymentId == paymentId);

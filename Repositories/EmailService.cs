@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using System.Net.Mail;
+using MailKit.Net.Smtp;
 using MimeKit;
 using SeleafAPI.Interfaces;
 
@@ -28,7 +29,7 @@ namespace SeleafAPI.Repositories
                 Text = info
             };
 
-            using (var client = new SmtpClient())
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
                 try
                 {
@@ -56,9 +57,20 @@ namespace SeleafAPI.Repositories
 
         public async Task SendEmailAsyncWithAttachment(string to, string subject, string info, MemoryStream pdfStream)
         {
+            // Validate the recipient email address
+            try
+            {
+                var mailAddress = new MailAddress(to);
+            }
+            catch (FormatException)
+            {
+                _logger.LogError("Invalid email address: {to}", to);
+                throw new ArgumentException("Invalid email address format.");
+            }
+
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_emailConfig.FromName, _emailConfig.FromAddress));
-            message.To.Add(new MailboxAddress("", to));
+            message.To.Add(new MailboxAddress("", to));  // Validated email address is added here
             message.Subject = subject;
 
             var body = new TextPart("html")
@@ -80,7 +92,7 @@ namespace SeleafAPI.Repositories
 
             message.Body = multipart;
 
-            using (var client = new SmtpClient())
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
                 try
                 {
@@ -118,5 +130,4 @@ namespace SeleafAPI.Repositories
         public string? UserName { get; set; }
         public string? Password { get; set; }
     }
-
 }
