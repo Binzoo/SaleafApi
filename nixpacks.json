@@ -1,7 +1,13 @@
 {
   "phases": {
-    "install": "dotnet restore SeleafAPI.csproj",
-    "build": "dotnet publish SeleafAPI.csproj --no-restore -c Release -o out"
+    "install": {
+      "cmds": ["dotnet restore SeleafAPI.csproj"]
+    },
+    "build": {
+      "cmds": ["dotnet publish SeleafAPI.csproj --no-restore -c Release -o out"]
+    }
   },
-  "start": "./out/SeleafAPI"
+  "start": {
+    "cmd": "./out/SeleafAPI"
+  }
 }
