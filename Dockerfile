@@ -13,6 +13,13 @@ RUN dotnet publish SeleafAPI.csproj -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
+# Install system fonts (necessary for PDF generation)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    fonts-dejavu-core \
+    fontconfig \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the output from the build stage
 COPY --from=build-env /app/out .
 
