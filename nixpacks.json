@@ -1,7 +1,10 @@
 {
   "phases": {
     "install": {
-      "cmds": ["dotnet restore SeleafAPI.csproj"]
+      "cmds": [
+        "nix-env -iA nixpkgs.nix --option download-buffer-size 50000000",
+        "dotnet restore SeleafAPI.csproj"
+      ]
     },
     "build": {
       "cmds": ["dotnet publish SeleafAPI.csproj --no-restore -c Release -o out"]
