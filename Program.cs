@@ -27,9 +27,10 @@ var connectionString = builder.Configuration["ConnectionStrings:Default"];
 var emailPassword = builder.Configuration["EmailConfiguration:Password"];
 var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
 // Retrieve AWS credentials and region from environment variables
-var awsAccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
-var awsSecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
-var awsRegion = Environment.GetEnvironmentVariable("AWS_REGION");
+var awsAccessKeyId = builder.Configuration["AWS_ACCESS_KEY_ID"];
+var awsSecretAccessKey = builder.Configuration["AWS_SECRET_ACCESS_KEY"];
+var awsRegion = builder.Configuration["AWS_REGION"];
+var awsBucketName = builder.Configuration["AWS_BUCKET_NAME"];
 
 // Register the AmazonS3 service
 builder.Services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions
@@ -37,17 +38,10 @@ builder.Services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOpt
     Credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey),
     Region = Amazon.RegionEndpoint.GetBySystemName(awsRegion)
 });
-
 builder.Services.AddAWSService<IAmazonS3>();
 
-// Register the S3Service
-builder.Services.AddScoped<S3Service>(provider =>
-{
-    var s3Client = provider.GetRequiredService<IAmazonS3>();
-    var awsBucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME"); // Retrieve bucket name
-    return new S3Service(s3Client, awsBucketName); // Return a new instance of S3Service
-});
-
+// Register the S3Service using the IS3Service interface
+builder.Services.AddScoped<IS3Service, S3Service>();
 
 
 
@@ -103,6 +97,7 @@ builder.Services.AddSwaggerGen(opt =>
             new string[]{}
         }
     });
+
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -172,7 +167,6 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPayment, PaymentRepository>();
 builder.Services.AddScoped<IDonation, DonationRepository>();
 builder.Services.AddScoped<IPdf, PdfRepository>();
-builder.Services.AddScoped<IS3Service, S3Service>();
 
 
 var app = builder.Build();

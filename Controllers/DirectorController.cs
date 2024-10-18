@@ -1,5 +1,7 @@
+using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SaleafApi.Interfaces;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
@@ -11,9 +13,16 @@ namespace SeleafAPI.Controllers
     public class DirectorController : ControllerBase
     {
         private readonly IRepository<Director> _director;
-        public DirectorController(IRepository<Director> director)
+        private readonly IS3Service _S3Service;
+        private readonly string _awsRegion;
+        private readonly string _bucketName;
+
+        public DirectorController(IRepository<Director> director, IS3Service S3Service, IConfiguration configuration)
         {
             _director = director;
+            _S3Service = S3Service;
+            _awsRegion = configuration["AWS_REGION"];  // Load from configuration
+            _bucketName = configuration["AWS_BUCKET_NAME"]; // Load from configuration
         }
 
         [HttpGet("get-all-director")]
@@ -38,55 +47,108 @@ namespace SeleafAPI.Controllers
             return Ok(director);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("add-director")]
-        public async Task<IActionResult> AddDirector([FromBody] DirectorDTO model)
+        public async Task<IActionResult> AddDirector([FromForm] DirectorDTO model)
         {
-            var director = new Director
+            if (model.DirectorImage == null || model.DirectorImage.Length == 0)
             {
-                DirectorName = model.DirectorName,
-                DirectorLastName = model.DirectorLastName,
-                DirectorImage = model.DirectorImage,
-                DirectorDescription = model.DirectorDescription
-            };
+                return BadRequest("Image file is required.");
+            }
 
-            await _director.AddAsync(director);
-            return Ok("Director Added");
+            // Define the file name or key for S3 (you can customize this)
+            var fileName = $"directors/{Guid.NewGuid()}-{model.DirectorImage.FileName}"; // Unique file name for S3
+
+            try
+            {
+                // Upload the image to S3
+                using (var newMemoryStream = new MemoryStream())
+                {
+                    await model.DirectorImage.CopyToAsync(newMemoryStream);
+                    await _S3Service.UploadFileAsync(newMemoryStream, fileName);  // Use the S3Service to upload the file
+                }
+
+                // Construct the URL of the uploaded image
+                var s3Url = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
+
+                // Save the director info with the S3 URL in the database
+                var director = new Director
+                {
+                    DirectorName = model.DirectorName,
+                    DirectorLastName = model.DirectorLastName,
+                    DirectorImage = s3Url,  // Save the S3 URL
+                    DirectorDescription = model.DirectorDescription
+                };
+
+                await _director.AddAsync(director);  // Save to the database
+                return Ok("Director added and image uploaded to S3.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error uploading image: {ex.Message}");
+            }
         }
 
-        [Authorize(Roles = "admin")]
-        [HttpPut("update-director")]
-        public async Task<IActionResult> UpdateDirector(int id, [FromBody] DirectorDTO directorDTO)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("update-director/{id}")]
+        public async Task<IActionResult> UpdateDirector(int id, [FromForm] DirectorDTO model)
         {
             var director = await _director.GetByIdAsync(id);
 
             if (director == null)
             {
-                return NotFound();
+                return NotFound("Director not found.");
             }
 
-            director.DirectorName = directorDTO.DirectorName;
-            director.DirectorLastName = directorDTO.DirectorLastName;
-            director.DirectorImage = directorDTO.DirectorImage;
-            director.DirectorDescription = directorDTO.DirectorDescription;
+            // Handle image update if a new image is uploaded
+            if (model.DirectorImage != null && model.DirectorImage.Length > 0)
+            {
+                // Define the file name or key for S3
+                var fileName = $"directors/{Guid.NewGuid()}-{model.DirectorImage.FileName}";
+
+                try
+                {
+                    // Upload the new image to S3
+                    using (var newMemoryStream = new MemoryStream())
+                    {
+                        await model.DirectorImage.CopyToAsync(newMemoryStream);
+                        await _S3Service.UploadFileAsync(newMemoryStream, fileName);
+                    }
+
+                    // Get the URL of the uploaded image
+                    var s3Url = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
+
+                    // Update the director's image URL
+                    director.DirectorImage = s3Url;
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Error uploading image: {ex.Message}");
+                }
+            }
+
+            // Update the other director fields
+            director.DirectorName = model.DirectorName;
+            director.DirectorLastName = model.DirectorLastName;
+            director.DirectorDescription = model.DirectorDescription;
 
             await _director.UpdateAsync(director);
             return Ok("Director has been updated successfully.");
         }
 
-        [Authorize(Roles = "admin")]
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDirector(int id)
         {
             var director = await _director.GetByIdAsync(id);
             if (director == null)
             {
-                return NotFound("Director Not found.");
+                return NotFound("Director not found.");
             }
 
             await _director.DeleteAsync(director);
             return Ok("Director has been deleted successfully.");
         }
-
     }
 }

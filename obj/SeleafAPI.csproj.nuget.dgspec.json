@@ -53,7 +53,7 @@
             },
             "AWSSDK.S3": {
               "target": "Package",
-              "version": "[4.0.0-preview, )"
+              "version": "[3.7.405, )"
             },
             "DotNetEnv": {
               "target": "Package",

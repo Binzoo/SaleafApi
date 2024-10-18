@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "bwKncKX6xDU=",
-  "success": false,
+  "dgSpecHash": "pbD3sfFG0LE=",
+  "success": true,
   "projectFilePath": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/SeleafAPI.csproj",
   "expectedPackageFiles": [
     "/Users/binamrathapa/.nuget/packages/awssdk.core/3.7.400.36/awssdk.core.3.7.400.36.nupkg.sha512",
     "/Users/binamrathapa/.nuget/packages/awssdk.extensions.netcore.setup/3.7.301/awssdk.extensions.netcore.setup.3.7.301.nupkg.sha512",
-    "/Users/binamrathapa/.nuget/packages/awssdk.s3/4.0.0-preview/awssdk.s3.4.0.0-preview.nupkg.sha512",
+    "/Users/binamrathapa/.nuget/packages/awssdk.s3/3.7.405/awssdk.s3.3.7.405.nupkg.sha512",
     "/Users/binamrathapa/.nuget/packages/azure.core/1.35.0/azure.core.1.35.0.nupkg.sha512",
     "/Users/binamrathapa/.nuget/packages/azure.identity/1.10.3/azure.identity.1.10.3.nupkg.sha512",
     "/Users/binamrathapa/.nuget/packages/dotnetenv/3.1.1/dotnetenv.3.1.1.nupkg.sha512",
@@ -259,15 +259,5 @@
     "/Users/binamrathapa/.nuget/packages/system.xml.readerwriter/4.3.0/system.xml.readerwriter.4.3.0.nupkg.sha512",
     "/Users/binamrathapa/.nuget/packages/system.xml.xdocument/4.3.0/system.xml.xdocument.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1605",
-      "level": "Error",
-      "message": "Warning As Error: Detected package downgrade: AWSSDK.Core from 4.0.0-preview to 3.7.400.36. Reference the package directly from the project to select a different version. \n SeleafAPI -> AWSSDK.S3 4.0.0-preview -> AWSSDK.Core (>= 4.0.0-preview && < 5.0.0-preview) \n SeleafAPI -> AWSSDK.Core (>= 3.7.400.36)",
-      "libraryId": "AWSSDK.Core",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }

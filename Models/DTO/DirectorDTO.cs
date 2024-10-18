@@ -10,7 +10,7 @@ public class DirectorDTO
     [Required]
     public string? DirectorLastName { get; set; }
     [Required]
-    public string? DirectorImage { get; set; }
+    public IFormFile DirectorImage { get; set; }
     [Required]
     public string? DirectorDescription { get; set; }
 }
