@@ -147,7 +147,7 @@ namespace SeleafAPI.Controllers
                 var refreshTokenEntry = new RefreshToken
                 {
                     Token = refreshToken,
-                    ExpiryDate = DateTime.Now.AddDays(7), // Refresh token expires after 7 days
+                    ExpiryDate = DateTime.UtcNow.AddDays(7), // Refresh token expires after 7 days
                     UserId = user.Id,
                     IsRevoked = false
                 };
