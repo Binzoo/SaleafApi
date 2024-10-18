@@ -1,0 +1,7 @@
+{
+  "phases": {
+    "install": "dotnet restore SeleafAPI.csproj",
+    "build": "dotnet publish SeleafAPI.csproj --no-restore -c Release -o out"
+  },
+  "start": "./out/SeleafAPI"
+}
