@@ -43,7 +43,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 
-//allows to add berer token on swagger
+//allows to add bearer token on swagger
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
@@ -74,13 +74,13 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-    sqlServerOptionsAction: sqlOptions =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
+    npgsqlOptionsAction: npgsqlOptions =>
     {
-        sqlOptions.EnableRetryOnFailure(
+        npgsqlOptions.EnableRetryOnFailure(
         maxRetryCount: 5,
         maxRetryDelay: TimeSpan.FromSeconds(30),
-        errorNumbersToAdd: null);
+        errorCodesToAdd: null);
     }
     )
 );

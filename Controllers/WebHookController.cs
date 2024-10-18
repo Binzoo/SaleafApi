@@ -14,7 +14,6 @@ namespace SeleafAPI.Controllers
     [ApiController]
     public class WebHookController : ControllerBase
     {
-
         private readonly IDonation _donationRepository;
         private readonly IEmailSender _emailService;
         private readonly IUserRepository _user;
@@ -131,12 +130,81 @@ namespace SeleafAPI.Controllers
                 var pdfStream = _pdf.GetPdf(allDonorCertificate);
                 await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream);
             }
+            else if (webhookEvent.Type == "payment.failed")
+            {
+                var checkoutId = webhookEvent.Payload!.Metadata!.CheckoutId;
+                var userId = await _paymentRepository.GetAppUserIdByPaymentId(checkoutId!);
+                var paidUser = await _user.FindByIdAsync(userId);
+                if (paidUser == null)
+                {
+                    return BadRequest("No user found.");
+                }
+                string body = @"<html>
+                                    <head>
+                                        <style>
+                                            .email-content {
+                                                font-family: Arial, sans-serif;
+                                                color: #333;
+                                            }
+                                            .email-header {
+                                                background-color: #f8f8f8;
+                                                padding: 20px;
+                                                text-align: center;
+                                                border-bottom: 1px solid #ddd;
+                                            }
+                                            .email-body {
+                                                padding: 20px;
+                                            }
+                                            .email-footer {
+                                                background-color: #f8f8f8;
+                                                padding: 10px;
+                                                text-align: center;
+                                                font-size: 12px;
+                                                color: #888;
+                                                border-top: 1px solid #ddd;
+                                            }
+                                            .button {
+                                                background-color: #dc3545;
+                                                color: white;
+                                                padding: 10px 20px;
+                                                text-align: center;
+                                                text-decoration: none;
+                                                display: inline-block;
+                                                border-radius: 5px;
+                                            }
+                                        </style>
+                                    </head>
+                                    <body>
+                                        <div class='email-content'>
+                                            <div class='email-header'>
+                                                <h1>Payment Failed</h1>
+                                            </div>
+                                            <div class='email-body'>
+                                                <p>Dear valued supporter,</p>
+                                                <p>We regret to inform you that your payment has not been successful.</p>
+                                                <p>Please try again or contact us if you have any questions or concerns.</p>
+                                                <p>Your support means a lot to us, and we hope to resolve this issue soon.</p>
+                                                <p>Best regards,<br/>The SALEAF Team</p>
+                                                <a href='#' class='button'>Retry Payment</a>
+                                            </div>
+                                            <div class='email-footer'>
+                                                <p>&copy; 2024 SALEAF. All rights reserved.</p>
+                                            </div>
+                                        </div>
+                                    </body>
+                                </html>";
+
+                await _emailService.SendEmailAsync(paidUser.Email!, "SALEAF", body);
+            }
             else
             {
                 return BadRequest($"Unhandled event type: {webhookEvent.Type}");
             }
             return Ok();
         }
+
+
+
     }
 
     public class AllDonorCertificateInfo
