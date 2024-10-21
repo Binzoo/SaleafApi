@@ -27,6 +27,16 @@ namespace SaleafApi.Repositories
             return donations;
         }
 
+        public async Task<Donation> GetDonationById(int id)
+        {
+            var donation = await _context.Donations.FindAsync(id);
+            if (donation == null)
+            {
+                return null;
+            }
+            return donation;
+        }
+
         public async Task<Donation> CreateDonationAsync(Donation donation)
         {
             _context.Donations.Add(donation);

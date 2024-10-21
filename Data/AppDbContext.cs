@@ -21,6 +21,7 @@ namespace SeleafAPI.Data
         public DbSet<Donation> Donations { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<DonorCertificateInfo> DonorCertificateInfos { get; set; }
+        public DbSet<ManualPaymentDoc> ManualPaymentDocs { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

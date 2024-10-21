@@ -12,5 +12,6 @@ namespace SaleafApi.Interfaces
         Task<List<Donation>> GetDonations();
         Task<Donation> GetDonationByPaymentIdAsync(string paymentId);
         Task UpdateDonationStatusAsync(string paymentId, bool isPaid);
+        Task<Donation> GetDonationById(int id);
     }
 }
