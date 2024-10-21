@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SeleafAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6426817ecd66851fdc8f9e8185486780c5479c69")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a3e5176c4f05f77fdd34d046e48f708e8d9e8106")]
 [assembly: System.Reflection.AssemblyProductAttribute("SeleafAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SeleafAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
