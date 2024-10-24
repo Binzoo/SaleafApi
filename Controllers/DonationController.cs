@@ -95,7 +95,7 @@ namespace SeleafAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while processing the donation.");
+                return StatusCode(500, new { message = "An error occurred while processing the donation.", Details = ex.Message });
             }
         }
 

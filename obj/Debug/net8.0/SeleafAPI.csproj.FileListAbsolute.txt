@@ -1344,6 +1344,8 @@ c:/Users/binam/Downloads/WorkIntegreted/SaleafApi/bin/Debug/net8.0/de/PdfSharpCo
 /Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/SeleafAPI.runtimeconfig.json
 /Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/SeleafAPI.dll
 /Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/SeleafAPI.pdb
+/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/AutoMapper.dll
+/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 /Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/AWSSDK.Core.dll
 /Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/AWSSDK.Extensions.NETCore.Setup.dll
 /Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/bin/Debug/net8.0/AWSSDK.S3.dll

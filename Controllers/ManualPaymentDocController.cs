@@ -28,8 +28,8 @@ namespace SaleafApi.Controllers
         {
             _S3Service = S3Service;
             _repository = repository;
-            _awsRegion = configuration["AWS_REGION"];  // Load from configuration
-            _bucketName = configuration["AWS_BUCKET_NAME"];
+            _awsRegion = configuration["AWS_REGION"]!;  // Load from configuration
+            _bucketName = configuration["AWS_BUCKET_NAME"]!;
             _donation = donation;
         }
 

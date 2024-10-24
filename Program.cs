@@ -13,6 +13,7 @@ using SeleafAPI.Interfaces;
 using SeleafAPI.Repositories;
 using Amazon.S3;
 using Amazon.Runtime;
+using SeleafAPI.Mapping;
 
 
 DotNetEnv.Env.Load();
@@ -42,8 +43,6 @@ builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddScoped<IS3Service, S3Service>();
 
 
-
-
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpClient();
@@ -51,6 +50,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 
 

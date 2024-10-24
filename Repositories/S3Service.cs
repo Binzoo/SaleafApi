@@ -14,7 +14,7 @@ namespace SaleafApi.Repositories
         public S3Service(IAmazonS3 s3Client, IConfiguration configuration)
         {
             _s3Client = s3Client;
-            _bucketName = configuration["AWS_BUCKET_NAME"]; // Retrieve bucket name from configuration
+            _bucketName = configuration["AWS_BUCKET_NAME"]!; // Retrieve bucket name from configuration
         }
 
         public async Task<Stream> DownloadFileAsync(string fileName)

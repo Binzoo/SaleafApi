@@ -12,8 +12,8 @@ using SeleafAPI.Data;
 namespace SeleafAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241021163434_Added manual payment")]
-    partial class Addedmanualpayment
+    [Migration("20241022194956_Added_Bursary_Application")]
+    partial class Added_Bursary_Application
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -320,6 +320,163 @@ namespace SeleafAPI.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("SeleafAPI.Models.BursaryApplication", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ApproximateFundingRequired")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("ContactNumber")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ContingentLiabilities")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("CreditCardDebts")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DeclarationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeclarationSignedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DegreeOrDiploma")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DependentsAtPreSchool")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DependentsAtSchool")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DependentsAtUniversity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DisabilityExplanation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("EquipmentValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("FurnitureAndFittingsValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Grade11SubjectsAndResultsUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Grade12SubjectsAndResultsUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("HasDisabilities")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasSensitiveMatters")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("HobbiesAndInterests")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HomePhysicalAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HomePostalAddress")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("IncomeTaxDebts")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("InstitutionAppliedFor")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IntendsToStudyFurther")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsOfLebaneseOrigin")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("JewelleryValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("LeadershipRoles")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameOfInstitution")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameOfSchool")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Overdrafts")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("PlaceOfBirth")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReasonForStudyFieldChoice")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SAIDNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SelfDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SportsAndCulturalActivities")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StudentNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TertiarySubjectsAndResultsUrl")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("TotalOfAssetsAndLiabilities")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("UnsecuredLoans")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("WhySelectYou")
+                        .HasColumnType("text");
+
+                    b.Property<int>("YearCommencedInstitution")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YearCommencedSchool")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("YearOfStudyAndCommencement")
+                        .HasColumnType("text");
+
+                    b.Property<int>("YearToBeCompletedInstitution")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YearToBeCompletedSchool")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BursaryApplications");
+                });
+
             modelBuilder.Entity("SeleafAPI.Models.DTO.PasswordResetDTO", b =>
                 {
                     b.Property<int>("Id")
@@ -342,6 +499,36 @@ namespace SeleafAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PasswordResetsCodes");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.DependentInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InstitutionName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RelationshipToApplicant")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("DependentInfos");
                 });
 
             modelBuilder.Entity("SeleafAPI.Models.Director", b =>
@@ -432,6 +619,210 @@ namespace SeleafAPI.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("SeleafAPI.Models.FinancialDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("GrossMonthlyIncome")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("MaritalStatus")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("OtherIncome")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SAIDNumber")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("FinancialDetails");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.InvestmentDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("MarketValue")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("InvestmentDetails");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.LifeAssurancePolicy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("SurrenderValue")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("LifeAssurancePolicies");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.OtherAsset", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("OtherAssets");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.OtherLiability", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("OtherLiabilities");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.PropertyDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DatePurchased")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ErfNoTownship")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("MunicipalValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("PhysicalAddress")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("PresentValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PurchasePrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("PropertyDetails");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.VehicleDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BursaryApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MakeModelYear")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("PresentValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("RegistrationNumber")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BursaryApplicationId");
+
+                    b.ToTable("VehicleDetails");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -503,6 +894,17 @@ namespace SeleafAPI.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("SeleafAPI.Models.DependentInfo", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("Dependents")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
             modelBuilder.Entity("SeleafAPI.Models.Donation", b =>
                 {
                     b.HasOne("SeleafAPI.Data.AppUser", "AppUser")
@@ -512,9 +914,105 @@ namespace SeleafAPI.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("SeleafAPI.Models.FinancialDetails", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("FinancialDetailsList")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.InvestmentDetails", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("Investments")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.LifeAssurancePolicy", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("LifeAssurancePolicies")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.OtherAsset", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("OtherAssets")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.OtherLiability", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("OtherLiabilities")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.PropertyDetails", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("FixedProperties")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.VehicleDetails", b =>
+                {
+                    b.HasOne("SeleafAPI.Models.BursaryApplication", "BursaryApplication")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
             modelBuilder.Entity("SeleafAPI.Data.AppUser", b =>
                 {
                     b.Navigation("Donations");
+                });
+
+            modelBuilder.Entity("SeleafAPI.Models.BursaryApplication", b =>
+                {
+                    b.Navigation("Dependents");
+
+                    b.Navigation("FinancialDetailsList");
+
+                    b.Navigation("FixedProperties");
+
+                    b.Navigation("Investments");
+
+                    b.Navigation("LifeAssurancePolicies");
+
+                    b.Navigation("OtherAssets");
+
+                    b.Navigation("OtherLiabilities");
+
+                    b.Navigation("Vehicles");
                 });
 #pragma warning restore 612, 618
         }
