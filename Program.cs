@@ -14,6 +14,7 @@ using SeleafAPI.Repositories;
 using Amazon.S3;
 using Amazon.Runtime;
 using SeleafAPI.Mapping;
+using SeleafAPI.Filters.SwaggerConfig;
 
 
 DotNetEnv.Env.Load();
@@ -71,6 +72,7 @@ builder.Services.AddEndpointsApiExplorer();
 //allows to add bearer token on swagger
 builder.Services.AddSwaggerGen(opt =>
 {
+    opt.OperationFilter<FileUploadOperationFilter>();
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

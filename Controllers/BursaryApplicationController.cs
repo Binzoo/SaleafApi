@@ -143,7 +143,7 @@ namespace SeleafAPI.Controllers
                     DeclarationDate = uploadDto.DeclarationDate
                 };
 
-                _context.BursaryApplications.Add(bursary);
+                await _context.BursaryApplications.AddAsync(bursary);
                 await _context.SaveChangesAsync();
 
                 foreach (var f in uploadDto.FinancialDetailsList)
@@ -159,7 +159,7 @@ namespace SeleafAPI.Controllers
                         Role = f.Role,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.FinancialDetails.Add(financialDetail);
+                    await _context.FinancialDetails.AddAsync(financialDetail);
                 }
 
                 // Dependents
@@ -172,8 +172,8 @@ namespace SeleafAPI.Controllers
                         Age = d.Age,
                         InstitutionName = d.InstitutionName,
                         BursaryApplicationId = bursary.Id
-                    };
-                    _context.DependentInfos.Add(dependent);
+                    };  
+                    await _context.DependentInfos.AddAsync(dependent);
                 }
 
                 // Fixed Properties
@@ -189,7 +189,7 @@ namespace SeleafAPI.Controllers
                         PresentValue = p.PresentValue,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.PropertyDetails.Add(property);
+                    await _context.PropertyDetails.AddAsync(property);
                 }
 
                 // Vehicles
@@ -202,7 +202,7 @@ namespace SeleafAPI.Controllers
                         PresentValue = v.PresentValue,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.VehicleDetails.Add(vehicle);
+                    await _context.VehicleDetails.AddAsync(vehicle);
                 }
 
                 // Life Assurance Policies
@@ -215,7 +215,7 @@ namespace SeleafAPI.Controllers
                         SurrenderValue = l.SurrenderValue,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.LifeAssurancePolicies.Add(lifePolicy);
+                    await _context.LifeAssurancePolicies.AddAsync(lifePolicy);
                 }
 
                 // Investments
@@ -228,7 +228,7 @@ namespace SeleafAPI.Controllers
                         MarketValue = i.MarketValue,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.InvestmentDetails.Add(investment);
+                    await _context.InvestmentDetails.AddAsync(investment);
                 }
 
                 // Other Assets
@@ -240,7 +240,7 @@ namespace SeleafAPI.Controllers
                         Value = o.Value,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.OtherAssets.Add(otherAsset);
+                    await _context.OtherAssets.AddAsync(otherAsset);
                 }
 
                 // Other Liabilities
@@ -252,7 +252,7 @@ namespace SeleafAPI.Controllers
                         Amount = ol.Amount,
                         BursaryApplicationId = bursary.Id
                     };
-                    _context.OtherLiabilities.Add(otherLiability);
+                    await _context.OtherLiabilities.AddAsync(otherLiability);
                 }
                 await _context.SaveChangesAsync();
                 return Ok("Bursary Application Created");

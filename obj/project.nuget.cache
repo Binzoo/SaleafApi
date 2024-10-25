@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EC4X1Z8xcyY=",
+  "dgSpecHash": "LGrBP3nH8xg=",
   "success": true,
-  "projectFilePath": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/SeleafAPI.csproj",
+  "projectFilePath": "/Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/SeleafAPI.csproj",
   "expectedPackageFiles": [
     "/Users/binamrathapa/.nuget/packages/automapper/12.0.1/automapper.12.0.1.nupkg.sha512",
     "/Users/binamrathapa/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

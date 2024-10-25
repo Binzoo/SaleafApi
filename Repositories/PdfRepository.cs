@@ -114,7 +114,6 @@ namespace SaleafApi.Repositories
                         words += "-" + unitsMap[number % 10];
                 }
             }
-
             return words.Trim();
         }
     }

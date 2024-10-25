@@ -15,6 +15,7 @@ namespace SeleafAPI.Data
         {
 
         }
+
         public DbSet<PasswordResetDTO> PasswordResetsCodes { get; set; }
         public DbSet<Director> Directors { get; set; }
         public DbSet<Event> Events { get; set; }
@@ -31,6 +32,8 @@ namespace SeleafAPI.Data
         public DbSet<InvestmentDetails> InvestmentDetails { get; set; }
         public DbSet<OtherAsset> OtherAssets { get; set; }
         public DbSet<OtherLiability> OtherLiabilities { get; set; }
+
+        public DbSet<BankAccountInfo> BankAccountInfo { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -77,7 +80,6 @@ namespace SeleafAPI.Data
                 .HasMany(b => b.OtherLiabilities)
                 .WithOne(o => o.BursaryApplication)
                 .HasForeignKey(o => o.BursaryApplicationId);
-
         }
     }
 }

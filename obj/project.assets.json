@@ -13371,11 +13371,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/SeleafAPI.csproj",
+      "projectUniqueName": "/Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/SeleafAPI.csproj",
       "projectName": "SeleafAPI",
-      "projectPath": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/SeleafAPI.csproj",
+      "projectPath": "/Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/SeleafAPI.csproj",
       "packagesPath": "/Users/binamrathapa/.nuget/packages/",
-      "outputPath": "/Users/binamrathapa/Desktop/WorkIntegrated/SaleafApi/obj/",
+      "outputPath": "/Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/binamrathapa/.nuget/NuGet/NuGet.Config"
