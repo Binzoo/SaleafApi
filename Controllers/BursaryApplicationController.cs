@@ -32,7 +32,7 @@ namespace SeleafAPI.Controllers
         }
 
         // POST: api/BursaryApplication
-        [Authorize]
+       // [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateApplication([FromForm] BursaryApplicationFileUploadDto uploadDto)
         {
@@ -128,7 +128,11 @@ namespace SeleafAPI.Controllers
                     IntendsToStudyFurther = uploadDto.IntendsToStudyFurther,
                     WhySelectYou = uploadDto.WhySelectYou,
                     HasSensitiveMatters = uploadDto.HasSensitiveMatters,
-
+                    
+                    DependentsAtPreSchool = uploadDto.DependentsAtPreSchool,
+                    DependentsAtSchool = uploadDto.DependentsAtSchool,
+                    DependentsAtUniversity = uploadDto.DependentsAtUniversity,
+                    
                     // Totals and Declaration
                     JewelleryValue = uploadDto.JewelleryValue,
                     FurnitureAndFittingsValue = uploadDto.FurnitureAndFittingsValue,
@@ -140,7 +144,7 @@ namespace SeleafAPI.Controllers
                     ContingentLiabilities = uploadDto.ContingentLiabilities,
                     TotalOfAssetsAndLiabilities = uploadDto.TotalOfAssetsAndLiabilities,
                     DeclarationSignedBy = uploadDto.DeclarationSignedBy,
-                    DeclarationDate = uploadDto.DeclarationDate
+                    DeclarationDate = uploadDto.DeclarationDate,
                 };
 
                 await _context.BursaryApplications.AddAsync(bursary);

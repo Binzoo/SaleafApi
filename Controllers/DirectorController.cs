@@ -76,11 +76,11 @@ namespace SeleafAPI.Controllers
                 {
                     DirectorName = model.DirectorName,
                     DirectorLastName = model.DirectorLastName,
-                    DirectorImage = s3Url,  // Save the S3 URL
+                    DirectorImage = s3Url, 
                     DirectorDescription = model.DirectorDescription
                 };
 
-                await _director.AddAsync(director);  // Save to the database
+                await _director.AddAsync(director);  
                 return Ok("Director added and image uploaded to S3.");
             }
             catch (Exception ex)
@@ -100,9 +100,7 @@ namespace SeleafAPI.Controllers
                 return NotFound("Director not found.");
             }
 
-            // Handle image update if a new image is uploaded
-            if (model.DirectorImage != null && model.DirectorImage.Length > 0)
-            {
+            if (model.DirectorImage != null && model.DirectorImage.Length > 0){
                 // Define the file name or key for S3
                 var fileName = $"directors/{Guid.NewGuid()}-{model.DirectorImage.FileName}";
 

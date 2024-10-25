@@ -14,7 +14,7 @@ namespace SeleafAPI.Models
         // Applicant Details
         public string? Name { get; set; }
         public string? Surname { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public string? SAIDNumber { get; set; }
         public string? PlaceOfBirth { get; set; }
         public bool IsOfLebaneseOrigin { get; set; }
@@ -83,7 +83,7 @@ namespace SeleafAPI.Models
 
         // Declaration  
         public string? DeclarationSignedBy { get; set; }
-        public DateTime DeclarationDate { get; set; }
+        public string DeclarationDate { get; set; }
     }
 
 }

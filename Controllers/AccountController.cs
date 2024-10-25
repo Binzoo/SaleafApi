@@ -77,9 +77,9 @@ namespace SeleafAPI.Controllers
                     // Create claims for the JWT
                     var authClaims = new List<Claim>
                         {
-                            new Claim(JwtRegisteredClaimNames.Sub, user.Email!), // Email claim
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID claim
-                            new Claim("userId", user.Id), // User ID claim
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email!), 
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), 
+                            new Claim("userId", user.Id), 
                         };
 
                     // Add distinct roles to the claims

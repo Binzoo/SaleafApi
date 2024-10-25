@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SaleafApi.Models;
@@ -20,16 +16,15 @@ namespace SaleafApi.Controllers
         {
             _bankAccountInfo = bankAccountInfo;
         }
-
-        [Authorize("admin")]
+        
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] BankAccountInfoDTO model)
+        public async Task<IActionResult> Post([FromForm] BankAccountInfoDTO model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Input all field.");
             }
-
             var bankaccountinfo = new BankAccountInfo
             {
                 AccountNo = model.AccountNo,
@@ -55,23 +50,25 @@ namespace SaleafApi.Controllers
             return Ok(bankaccountinfos);
         }
 
-        [Authorize("admin")]
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] BankAccountInfoDTO model)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] BankAccountInfoDTO model)
         {
-            var bankinfo = new BankAccountInfo()
+            var existingBankInfo = await _bankAccountInfo.GetByIdAsync(id);
+
+            if (existingBankInfo == null)
             {
-                Branch = model.Branch,
-                AccountNo = model.AccountNo,
-                BranchCode = model.BranchCode
-            };
-            await _bankAccountInfo.UpdateAsync(bankinfo);
+                return NotFound();
+            }
+            existingBankInfo.AccountNo = model.AccountNo;
+            existingBankInfo.BranchCode = model.BranchCode;
+            existingBankInfo.Branch = model.Branch;
+            
+            await _bankAccountInfo.UpdateAsync(existingBankInfo);
             return Ok(new
             {
                 message = "BankInfo updated successfully."
             });
         }
-        
-        
     }
 }

@@ -9,7 +9,7 @@ public class PropertyDetails
 
     public string? PhysicalAddress { get; set; }
     public string? ErfNoTownship { get; set; }
-    public DateTime DatePurchased { get; set; }
+    public string? DatePurchased { get; set; }
     public decimal PurchasePrice { get; set; }
     public decimal MunicipalValue { get; set; }
     public decimal PresentValue { get; set; }

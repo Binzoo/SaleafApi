@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeleafAPI.Data;
@@ -11,9 +12,11 @@ using SeleafAPI.Data;
 namespace SeleafAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241025130106_UpdatedDateToString")]
+    partial class UpdatedDateToString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -800,8 +803,8 @@ namespace SeleafAPI.Migrations
                     b.Property<int>("BursaryApplicationId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("DatePurchased")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("DatePurchased")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ErfNoTownship")
                         .HasColumnType("text");
