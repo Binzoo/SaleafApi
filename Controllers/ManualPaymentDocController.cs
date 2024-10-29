@@ -21,14 +21,12 @@ namespace SaleafApi.Controllers
         private readonly string _awsRegion;
         private readonly string _bucketName;
         private readonly IDonation _donation;
-
-
         public ManualPaymentDocController(IRepository<ManualPaymentDoc> repository,
         IS3Service S3Service, IConfiguration configuration, IDonation donation)
         {
             _S3Service = S3Service;
             _repository = repository;
-            _awsRegion = configuration["AWS_REGION"]!;  // Load from configuration
+            _awsRegion = configuration["AWS_REGION"]!;  
             _bucketName = configuration["AWS_BUCKET_NAME"]!;
             _donation = donation;
         }
@@ -84,7 +82,5 @@ namespace SaleafApi.Controllers
                 return StatusCode(500, new { Message = "An unexpected error occurred while processing your request.", Details = ex.Message });
             }
         }
-
-
     }
 }

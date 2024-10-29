@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +14,6 @@ using Amazon.S3;
 using Amazon.Runtime;
 using SeleafAPI.Mapping;
 using SeleafAPI.Filters.SwaggerConfig;
-
 
 
 DotNetEnv.Env.Load();
@@ -169,7 +167,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPayment, PaymentRepository>();
 builder.Services.AddScoped<IDonation, DonationRepository>();
 builder.Services.AddScoped<IPdf, PdfRepository>();
-
+builder.Services.AddScoped<IEvent, EventRepository>();
 
 var app = builder.Build();
 

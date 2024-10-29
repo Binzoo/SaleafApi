@@ -9,4 +9,6 @@ public class Event
     public string? EventDescription { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+    public string Status { get; set; }
+    public bool Publish { get; set; }
 }

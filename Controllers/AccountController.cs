@@ -54,7 +54,7 @@ namespace SeleafAPI.Controllers
                 };
                 user.UserName = model.Email;
 
-                // Attempt to create the user
+                // create the user
                 var result = await _userRepository.CreateAsync(user, model.Password);
 
                 // Assign role based on whether the user is a student

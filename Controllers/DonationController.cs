@@ -25,7 +25,6 @@ namespace SeleafAPI.Controllers
             _donation = donation;
             _user = user;
             _emailService = emailService;
-
         }
 
         [Authorize]
@@ -57,7 +56,7 @@ namespace SeleafAPI.Controllers
                 return StatusCode(500, $"Error processing the donation: {ex.Message}");
             }
         }
-
+        
         [Authorize]
         [HttpPost("manual-payment-donation")]
         public async Task<IActionResult> ManualPaymentDonation([FromBody] ManualPaymentDonationDTO request)

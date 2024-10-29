@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SaleafApi.Interfaces;
 using SeleafAPI.Data;
@@ -287,7 +286,7 @@ namespace SeleafAPI.Controllers
                 // Check if there are any records
                 if (bursaryApplications == null || bursaryApplications.Count == 0)
                 {
-                    return Ok(new List<BursaryApplicationDataDto>()); // Return an empty list if no data is found
+                    return Ok(new List<BursaryApplicationDataDto>()); 
                 }
 
                 // Map them to the BursaryApplicationDataDto
@@ -324,11 +323,7 @@ namespace SeleafAPI.Controllers
                 {
                     return NotFound($"Bursary application with ID {id} not found.");
                 }
-
-                // Map the bursary application to BursaryApplicationDataDto
                 var bursaryApplicationDto = _mapper.Map<BursaryApplicationDataDto>(bursaryApplication);
-
-                // Return the application
                 return Ok(bursaryApplicationDto);
             }
             catch (Exception ex)
