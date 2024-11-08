@@ -31,7 +31,7 @@ namespace SeleafAPI.Controllers
         }
 
         // POST: api/BursaryApplication
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateApplication([FromForm] BursaryApplicationFileUploadDto uploadDto)
         {

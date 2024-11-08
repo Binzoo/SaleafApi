@@ -30,7 +30,6 @@ namespace SeleafAPI.Controllers
             _pdf = pdf;
             _donationRepository = donationRepository;
             _donorCertificateInfo = donorCertificateInfo;
-
         }
 
         // POST: api/webhook/yoco

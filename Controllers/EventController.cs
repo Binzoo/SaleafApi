@@ -9,7 +9,6 @@ namespace SeleafAPI.Controllers;
 [ApiController]
 public class EventController : ControllerBase
 {
-    
     private readonly IRepository<Event> _repository;
     private readonly IEvent _eventRepo;
     
@@ -62,7 +61,6 @@ public class EventController : ControllerBase
             message = "Event created successfully"
         });
     }
-    
     
     [Authorize(Roles = "Admin")]
     [HttpPut]

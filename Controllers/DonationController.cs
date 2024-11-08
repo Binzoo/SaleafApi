@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
 using SaleafApi.Interfaces;
-using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
@@ -97,7 +94,6 @@ namespace SeleafAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing the donation.", Details = ex.Message });
             }
         }
-
 
         [Authorize(Roles = "Admin")]
         [HttpGet]

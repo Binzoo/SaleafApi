@@ -38,6 +38,11 @@ namespace SeleafAPI.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                
                 // Check if the email already exists
                 var userEmail = await _userRepository.FindByEmailAsync(model.Email);
                 if (userEmail != null)
