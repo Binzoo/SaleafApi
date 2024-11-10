@@ -52,6 +52,7 @@ public class EventController : ControllerBase
             StartDate =  eventDto.StartDate,
             EndDate = eventDto.EndDate,
             Status = status,
+            EventPrice = eventDto.EventPrice,   
             Publish = eventDto.Publish
         };
         
@@ -105,6 +106,7 @@ public class EventController : ControllerBase
             exist.StartDate = eventDto.StartDate;
             exist.EndDate = eventDto.EndDate;
             exist.Status = status;
+            exist.EventPrice = eventDto.EventPrice;
             exist.Publish = eventDto.Publish;
 
             await _repository.UpdateAsync(exist);

@@ -13,7 +13,8 @@ public class EventDTO
     public DateTime StartDate { get; set; }
     [Required(ErrorMessage = "End Date is required")]
     public DateTime EndDate { get; set; }
-
+    [Required(ErrorMessage = "End Date is required")]
+    public double EventPrice { get; set; } 
     [Required(ErrorMessage = "Publish is required")]
     public bool Publish { get; set; }
 }

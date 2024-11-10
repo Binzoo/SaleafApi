@@ -97,11 +97,18 @@ namespace SeleafAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetDonations()
+        public async Task<IActionResult> GetDonations([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
+            
             var donations = await _donation.GetDonations();
+            var totalItems = donations.Count(); 
+            
+            var paginatedDonations = donations
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
-            var model = donations.Select(d => new
+            var model = paginatedDonations.Select(d => new
             {
                 UserName = d.AppUser?.UserName ?? "Unknown",
                 FirstName = d.AppUser?.FirstName ?? "Unknown",
@@ -114,8 +121,18 @@ namespace SeleafAPI.Controllers
                 d.isAnonymous
             }).ToList();
 
-            return Ok(model);
+            var response = new
+            {
+                TotalItems = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize),
+                Data = model
+            };
+
+            return Ok(response);
         }
+
 
         private string returnManualPaymentHTMLFile(string referenceNo)
         {

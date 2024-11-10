@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SaleafApi.Interfaces;
-using SaleafApi.Repositories;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Repositories;
@@ -14,22 +12,20 @@ using Amazon.S3;
 using Amazon.Runtime;
 using SeleafAPI.Mapping;
 using SeleafAPI.Filters.SwaggerConfig;
-
+using SeleafAPI.Services;
+using Hangfire;
+using Hangfire.PostgreSql;
+using SaleafApi.Interfaces;
+using SaleafApi.Repositories;
 
 DotNetEnv.Env.Load();
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtKey = builder.Configuration["Jwt:Key"];
-var connectionString = builder.Configuration["ConnectionStrings:Default"];
-var emailPassword = builder.Configuration["EmailConfiguration:Password"];
-var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
 // Retrieve AWS credentials and region from environment variables
 var awsAccessKeyId = builder.Configuration["AWS_ACCESS_KEY_ID"];
 var awsSecretAccessKey = builder.Configuration["AWS_SECRET_ACCESS_KEY"];
 var awsRegion = builder.Configuration["AWS_REGION"];
-var awsBucketName = builder.Configuration["AWS_BUCKET_NAME"];
 
 // Register the AmazonS3 service
 builder.Services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions
@@ -39,36 +35,33 @@ builder.Services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOpt
 });
 builder.Services.AddAWSService<IAmazonS3>();
 
-// Register the S3Service using the IS3Service interface
+// Register services
 builder.Services.AddScoped<IS3Service, S3Service>();
-
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpClient();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
+builder.Services.AddHangfire(config => 
+    config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("Default")));
+builder.Services.AddHangfireServer();
+
+builder.Services.AddScoped<EventStatusUpdaterService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 
 builder.Services.AddEndpointsApiExplorer();
 
-//allows to add bearer token on swagger
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.OperationFilter<FileUploadOperationFilter>();
@@ -90,28 +83,29 @@ builder.Services.AddSwaggerGen(opt =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
             new string[]{}
         }
     });
-
 });
 
+
+
+// Database Context Configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
-    npgsqlOptionsAction: npgsqlOptions =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"), npgsqlOptions =>
     {
         npgsqlOptions.EnableRetryOnFailure(
-        maxRetryCount: 5,
-        maxRetryDelay: TimeSpan.FromSeconds(30),
-        errorCodesToAdd: null);
-    }
-    )
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null);
+    })
 );
 
+// Identity Configuration
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 6;
@@ -120,10 +114,10 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
 })
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
-
+// Authentication and JWT Configuration
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -144,6 +138,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
@@ -151,13 +146,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("StudentPolicy", policy => policy.RequireRole("Student"));
 });
 
+// Logging Configuration
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-var emailConfig = builder.Configuration
-    .GetSection("EmailConfiguration")
-    .Get<EmailConfiguration>();
-
+// Additional Services
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 builder.Services.AddSingleton(emailConfig!);
 builder.Services.AddTransient<IEmailSender, EmailService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -169,29 +163,40 @@ builder.Services.AddScoped<IDonation, DonationRepository>();
 builder.Services.AddScoped<IPdf, PdfRepository>();
 builder.Services.AddScoped<IEvent, EventRepository>();
 
+
+
+
+// Application Build
 var app = builder.Build();
 
+// Apply pending migrations
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
+// Configure HTTP pipeline
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
+app.UseHangfireDashboard(); 
 app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
+
+// Hangfire Recurring Job Example
+using (var scope = app.Services.CreateScope())
+{
+    var eventStatusUpdater = scope.ServiceProvider.GetRequiredService<EventStatusUpdaterService>();
+    RecurringJob.AddOrUpdate(
+        "update-event-statuses",
+        () => eventStatusUpdater.UpdateEventStatuses(),
+        "*/30 * * * *"); // Adjust schedule as needed
+}
 
 app.Run();
