@@ -5,8 +5,6 @@ namespace SaleafApi.Models.DTO
 {
     public class BursaryApplicationFileUploadDto
     {
-        public string? AppUserId { get; set; }
-        // Applicant Details
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public string DateOfBirth { get; set; }
