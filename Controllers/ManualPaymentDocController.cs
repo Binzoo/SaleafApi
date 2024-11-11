@@ -129,10 +129,10 @@ namespace SaleafApi.Controllers
             var getAll = await _repository.GetAllAsync();   
             return Ok(getAll);
         }
-
+        
         [Authorize(Roles = "Admin")]
-        [HttpPost("accept-manual-payment")]
-        public async Task<IActionResult> AcceptManualPayment([FromQuery] int referenceNo)
+        [HttpPost("accept-reject-manual-payment")]
+        public async Task<IActionResult> RejectManualPayment([FromQuery] int referenceNo, string reason, int statusCode)
         {
             try
             {
@@ -148,83 +148,54 @@ namespace SaleafApi.Controllers
                 {
                     return BadRequest(new { message = "You have already accepted this manual payment." });
                 }
-
-                manualpayment.Checked = true;
-                await _repository.UpdateAsync(manualpayment);
-
                 var donationWithUser = await _context.Donations
                     .Include(d => d.AppUser)
                     .FirstOrDefaultAsync(d => d.Id == referenceNo);
 
                 var userId = donationWithUser.AppUser.Id;
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                var certificate = await _context.DonorCertificateInfos.FirstOrDefaultAsync(e => e.AppUserId == userId);
-
-                if (certificate == null)
+                
+                
+                if (statusCode == 1)
                 {
-                    return NotFound(
-                        new
-                        {
-                            message = $"No certificate found for the user {user.FirstName} {user.LastName}.",
-                        });
-                }
+                    var certificate = await _context.DonorCertificateInfos.FirstOrDefaultAsync(e => e.AppUserId == userId);
 
-                AllDonorCertificateInfo allDonorCertificate = new AllDonorCertificateInfo
-                {
-                    RefNo = referenceNo,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    IdentityNoOrCompanyRegNo = certificate!.IdentityNoOrCompanyRegNo,
-                    IncomeTaxNumber = certificate.IncomeTaxNumber,
-                    Address = certificate.Address,
-                    PhoneNumber = certificate.PhoneNumber,
-                    Amount = donationWithUser.Amount,
-                    Email = user.Email,
-                    DateofReceiptofDonation = donationWithUser.CreatedAt
-                };
-                var pdfStream = _pdf.GetPdf(allDonorCertificate);
-                await _emailService.SendEmailAsyncWithAttachment(user.Email!, "Manual Payment accepted.", Body(),
-                    pdfStream);
-                return Ok(new { message = "Manual payment accepted." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500,
-                    new
+                    manualpayment.Checked = true;
+                    await _repository.UpdateAsync(manualpayment);
+                    
+                    if (certificate == null)
                     {
-                        message = "An unexpected error occurred while processing your request.", Details = ex.Message
-                    });
-            }
-        }
+                        return NotFound(
+                            new
+                            {
+                                message = $"No certificate found for the user {user.FirstName} {user.LastName}.",
+                            });
+                    }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("reject-manual-payment")]
-        public async Task<IActionResult> RejectManualPayment([FromQuery] int referenceNo, string reason)
-        {
-            try
-            {
-                var manualpayment = await _context.ManualPaymentDocs.Where(d => d.ReferenceNumber == referenceNo)
-                    .FirstOrDefaultAsync();
-                if (manualpayment == null)
-                {
-                    return NotFound(
-                        new { message = $"No manual payment found for the reference number {referenceNo}." });
+                    AllDonorCertificateInfo allDonorCertificate = new AllDonorCertificateInfo
+                    {
+                        RefNo = referenceNo,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        IdentityNoOrCompanyRegNo = certificate!.IdentityNoOrCompanyRegNo,
+                        IncomeTaxNumber = certificate.IncomeTaxNumber,
+                        Address = certificate.Address,
+                        PhoneNumber = certificate.PhoneNumber,
+                        Amount = donationWithUser.Amount,
+                        Email = user.Email,
+                        DateofReceiptofDonation = donationWithUser.CreatedAt
+                    };
+                    var pdfStream = _pdf.GetPdf(allDonorCertificate);
+                    await _emailService.SendEmailAsyncWithAttachment(user.Email!, "Manual Payment accepted.", Body(),
+                        pdfStream);
+                    return Ok(new { message = "Manual payment accepted." });
+                    
                 }
-
-                if (manualpayment.Checked)
+                else
                 {
-                    return BadRequest(new { message = "You have already accepted this manual payment." });
+                    await _emailService.SendEmailAsync(user.Email!, "Manual Payment rejected.", RejectionBody(reason));
+                    return Ok(new { message = "Manual payment rejected." });    
                 }
-
-                var donationWithUser = await _context.Donations
-                    .Include(d => d.AppUser)
-                    .FirstOrDefaultAsync(d => d.Id == referenceNo);
-
-                var userId = donationWithUser.AppUser.Id;
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
-                await _emailService.SendEmailAsync(user.Email!, "Manual Payment rejected.", RejectionBody(reason));
-                return Ok(new { message = "Manual payment rejected." });      
             }
             catch (Exception ex)
             {

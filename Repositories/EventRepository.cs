@@ -17,7 +17,7 @@ public class EventRepository : IEvent
     public async Task<List<Event>> GetUserEvent()
     {
         return await _context.Events
-            .Where(e => e.Status == "Upcoming")
+            .Where(e => e.Status == "Upcoming" && e.Publish == true)
             .ToListAsync();
     }
 
