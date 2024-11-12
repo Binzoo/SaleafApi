@@ -15,10 +15,7 @@ namespace SeleafAPI.Mapping
                 .ForMember(dest => dest.TertiarySubjectsAndResultsUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.Grade12SubjectsAndResultsUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.Grade11SubjectsAndResultsUrl, opt => opt.Ignore());
-
-
-
-
+            
             CreateMap<BursaryApplicationDataDto, BursaryApplication>()
             .ForMember(dest => dest.OtherLiabilities, opt => opt.MapFrom(src => src.OtherLiabilities))
             .ForMember(dest => dest.OtherAssets, opt => opt.MapFrom(src => src.OtherAssets))

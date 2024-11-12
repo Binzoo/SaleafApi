@@ -25,6 +25,8 @@ namespace SeleafAPI.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailService;
         private readonly AppDbContext _context;
+        
+
 
         public AccountController(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordResetRepository passwordResetRepository, 
             IConfiguration configuration, IEmailSender emailSender, AppDbContext context)
@@ -134,6 +136,7 @@ namespace SeleafAPI.Controllers
                 if (userEmail != null)
                 {
                     return BadRequest("Email already exists.");
+                    
                 }
                 // Create a new user
                 var user = new AppUser
@@ -332,7 +335,11 @@ namespace SeleafAPI.Controllers
             }                
             if (bursayUser.AppUserId == null)
             {
-                bursayUser.AppUserId = user.Id; 
+                string body = $"Please use this credentials to login to the app. Email: {bursayUser.Email} Password: P@ssword!1";
+                
+                bursayUser.AppUserId = user.Id;
+                await _emailService.SendEmailAsync(bursayUser.Email, "Your Saleaf Bursary Application has been accepted and account has been created.",
+                    body);
             }
             await _context.SaveChangesAsync();
             
