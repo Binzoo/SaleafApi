@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using SeleafAPI.Interfaces;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using SaleafApi.Models.DTO;
 using SaleafApi.Data;
 
@@ -23,14 +24,17 @@ namespace SeleafAPI.Controllers
         private readonly IPasswordResetRepository _passwordResetRepository;
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailService;
+        private readonly AppDbContext _context;
 
-        public AccountController(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordResetRepository passwordResetRepository, IConfiguration configuration, IEmailSender emailSender)
+        public AccountController(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordResetRepository passwordResetRepository, 
+            IConfiguration configuration, IEmailSender emailSender, AppDbContext context)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _passwordResetRepository = passwordResetRepository;
             _configuration = configuration;
             _emailService = emailSender;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -315,11 +319,23 @@ namespace SeleafAPI.Controllers
         [HttpPost("assign-role/{userId}")]
         public async Task<IActionResult> AssignRole(string userId, [FromBody] UserRoleDTO model)
         {
+            
             var user = await _userRepository.FindByIdAsync(userId);
             if (user == null)
             {
                 return BadRequest("User not found");
             }
+            var bursayUser = await _context.BursaryApplications.Where(e => e.Email == user.Email).FirstOrDefaultAsync();
+            if (bursayUser == null)
+            {
+                return BadRequest("User not found");
+            }                
+            if (bursayUser.AppUserId == null)
+            {
+                bursayUser.AppUserId = user.Id; 
+            }
+            await _context.SaveChangesAsync();
+            
             user.isVerified = true;
             var updateResult = await _userRepository.UpdateAsync(user);
             if (!updateResult.Succeeded)
