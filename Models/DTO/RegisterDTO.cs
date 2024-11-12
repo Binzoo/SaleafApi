@@ -17,6 +17,7 @@ namespace SeleafAPI.Models.DTO
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; } = string.Empty;
-        public bool isStudent { get; set; } = false;
+        [Required]
+        public bool isStudent { get; set; }
     }
 }

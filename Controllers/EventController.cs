@@ -4,9 +4,6 @@ using SaleafApi.Interfaces;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
-using System.Globalization;
-using System.Threading.Tasks;
-using System;
 
 namespace SeleafAPI.Controllers
 {
@@ -43,13 +40,10 @@ namespace SeleafAPI.Controllers
             {
                 return BadRequest("End date and time cannot be earlier than start date and time.");
             }
-
-            // Determine event status based on StartDateTime and EndDateTime
             string status = DetermineEventStatus(eventDto.StartDateTime, eventDto.EndDateTime);
 
             string? eventImageUrl = null;
 
-            // Handle file upload if provided
             if (eventDto.EventImageFile != null && eventDto.EventImageFile.Length > 0)
             {
                 var fileName = $"events/{Guid.NewGuid()}-{eventDto.EventImageFile.FileName}";
@@ -61,8 +55,6 @@ namespace SeleafAPI.Controllers
                         await eventDto.EventImageFile.CopyToAsync(memoryStream);
                         await _S3Service.UploadFileAsync(memoryStream, fileName);
                     }
-
-                    // Construct the URL for the uploaded image
                     eventImageUrl = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
                 }
                 catch (Exception ex)
@@ -183,6 +175,7 @@ namespace SeleafAPI.Controllers
                 return StatusCode(500, $"An error occurred while updating the event: {e.Message}");
             }
         }
+        
 
         [HttpGet("userevents")]
         public async Task<IActionResult> GetUserEvent()

@@ -7,6 +7,7 @@ using SaleafApi.Models.DTO;
 using SeleafAPI.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using SeleafAPI.Interfaces;
 
 
 namespace SeleafAPI.Controllers
@@ -20,23 +21,33 @@ namespace SeleafAPI.Controllers
         private readonly IS3Service _S3Service;
         private readonly string _awsRegion;
         private readonly string _bucketName;
+        private readonly IUserRepository _userRepository;
 
-        public BursaryApplicationController(AppDbContext context, IMapper mapper, IS3Service S3Service, IConfiguration configuration)
+        public BursaryApplicationController(AppDbContext context, IMapper mapper, IS3Service S3Service, IConfiguration configuration, IUserRepository userRepository)
         {
             _context = context;
             _mapper = mapper;
             _S3Service = S3Service;
             _awsRegion = configuration["AWS_REGION"];
             _bucketName = configuration["AWS_BUCKET_NAME"];
+            _userRepository = userRepository;
         }
 
         // POST: api/BursaryApplication
-        //[Authorize]
+       // [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateApplication([FromForm] BursaryApplicationFileUploadDto uploadDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            if (_context.BursaryApplications.Any(b => b.Email == uploadDto.Email))
+            {
+                return BadRequest(new
+                {
+                    message = "Bursary application already exists with this email."
+                });  
+            }
 
             try
             {
@@ -257,6 +268,30 @@ namespace SeleafAPI.Controllers
                     };
                     await _context.OtherLiabilities.AddAsync(otherLiability);
                 }
+                var userId1 = User.FindFirst("userId")?.Value;
+                if (userId1 == null)
+                {
+                    var appuser = new AppUser()
+                    {
+                        Email = uploadDto.Email,
+                        FirstName = uploadDto.Name,
+                        LastName = uploadDto.Surname,
+                        isStudent = true,
+                        UserName = uploadDto.Email
+                    };
+                    
+                    var result =  await _userRepository.CreateAsync(appuser, "P@ssword!1");
+                    if (result.Succeeded)
+                    {
+                        await _context.SaveChangesAsync();
+                        return Ok("Bursary Application and user has been Created");
+                    }
+                    else
+                    {
+                        return BadRequest(result.Errors);
+                    }
+                }
+                
                 await _context.SaveChangesAsync();
                 return Ok("Bursary Application Created");
             }

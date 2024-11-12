@@ -13,4 +13,3 @@ namespace SeleafAPI.Data
         public ICollection<Donation>? Donations { get; set; }
     }
 }
-

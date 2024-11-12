@@ -169,11 +169,28 @@ builder.Services.AddScoped<IEvent, EventRepository>();
 // Application Build
 var app = builder.Build();
 
+
+
 // Apply pending migrations
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
+}
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        SeedAdminUser(userManager, roleManager).Wait();
+    } catch (Exception ex)
+    {
+        Console.WriteLine($"Error seeding data: {ex.Message}");
+    }
 }
 
 // Configure HTTP pipeline
@@ -196,7 +213,29 @@ using (var scope = app.Services.CreateScope())
     RecurringJob.AddOrUpdate(
         "update-event-statuses",
         () => eventStatusUpdater.UpdateEventStatuses(),
-        "*/30 * * * *"); // Adjust schedule as needed
+        "*/30 * * * *"); 
 }
 
 app.Run();
+
+
+async Task SeedAdminUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+{
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+    var adminUser = await userManager.FindByEmailAsync("superadmin@gmail.com");
+    if (adminUser == null)
+    {
+        adminUser = new AppUser()
+        {
+            FirstName = "Super",
+            LastName = "Admin",
+            UserName = "superadmin@gmail.com",
+            Email = "superadmin@gmail.com",
+        };
+        await userManager.CreateAsync(adminUser, "Admin@123"); 
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
+}

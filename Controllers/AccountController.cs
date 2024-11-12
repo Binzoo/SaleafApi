@@ -113,7 +113,81 @@ namespace SeleafAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        
+        [Authorize(Roles = "Admin")]
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDTO model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                
+                // Check if the email already exists
+                var userEmail = await _userRepository.FindByEmailAsync(model.Email);
+                if (userEmail != null)
+                {
+                    return BadRequest("Email already exists.");
+                }
+                // Create a new user
+                var user = new AppUser
+                {
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                };
+                user.UserName = model.Email;
 
+                // create the user
+                var result = await _userRepository.CreateAsync(user, model.Password);
+                
+                result = await _userRepository.AddToRoleAsync(user, "Admin");
+                
+                // If the user creation and role assignment succeeded
+                if (result.Succeeded)
+                {
+                    // Fetch roles and remove duplicates
+                    var userRoles = await _userRepository.GetRolesAsync(user);
+                    var distinctRoles = userRoles.Distinct().ToList();
+
+                    // Create claims for the JWT
+                    var authClaims = new List<Claim>
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email!), 
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), 
+                            new Claim("userId", user.Id), 
+                        };
+
+                    // Add distinct roles to the claims
+                    authClaims.AddRange(distinctRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+                    // Generate JWT token
+                    var token = new JwtSecurityToken(
+                        issuer: _configuration["Jwt:Issuer"],
+                        expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
+                        claims: authClaims,
+                        signingCredentials: new SigningCredentials(
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
+                            SecurityAlgorithms.HmacSha256)
+                    );
+
+                    // Return the token and a success message
+                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), message = "Admin registered successfully" });
+                }
+
+                // If user creation or role assignment failed, return the errors
+                return BadRequest(result.Errors);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return a 500 status code with the error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        
+        
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
@@ -238,10 +312,10 @@ namespace SeleafAPI.Controllers
             return BadRequest("Role already exists");
         }
 
-        [HttpPost("assign-role")]
-        public async Task<IActionResult> AssignRole([FromBody] UserRoleDTO model)
+        [HttpPost("assign-role/{userId}")]
+        public async Task<IActionResult> AssignRole(string userId, [FromBody] UserRoleDTO model)
         {
-            var user = await _userRepository.FindByEmailAsync(model.Email);
+            var user = await _userRepository.FindByIdAsync(userId);
             if (user == null)
             {
                 return BadRequest("User not found");
@@ -264,7 +338,7 @@ namespace SeleafAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-unverify-student")]
         public IActionResult GetUnverifyStudent()
         {
@@ -273,7 +347,8 @@ namespace SeleafAPI.Controllers
                 Id = u.Id,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-                Email = u.Email!,
+                Email = u.Email,
+                UserName = u.UserName,
                 IsStudent = u.isStudent,
                 IsVerified = u.isVerified
             }).ToList();

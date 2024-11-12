@@ -1,8 +1,10 @@
-﻿namespace SeleafAPI.Models.DTO
+﻿using Microsoft.Build.Framework;
+
+namespace SeleafAPI.Models.DTO
 {
     public class UserRoleDTO
     {
-        public string Email { get; set; } = string.Empty;
+        [Required]
         public string Role { get; set; } = string.Empty;
     }
 }
