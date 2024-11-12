@@ -271,24 +271,30 @@ namespace SeleafAPI.Controllers
                 var userId1 = User.FindFirst("userId")?.Value;
                 if (userId1 == null)
                 {
-                    var appuser = new AppUser()
+
+                    var userexist = await _context.Users.Where(e => e.Email == uploadDto.Email).FirstOrDefaultAsync();
+
+                    if (userexist == null)
                     {
-                        Email = uploadDto.Email,
-                        FirstName = uploadDto.Name,
-                        LastName = uploadDto.Surname,
-                        isStudent = true,
-                        UserName = uploadDto.Email
-                    };
+                        var appuser = new AppUser()
+                        {
+                            Email = uploadDto.Email,
+                            FirstName = uploadDto.Name,
+                            LastName = uploadDto.Surname,
+                            isStudent = true,
+                            UserName = uploadDto.Email
+                        };
                     
-                    var result =  await _userRepository.CreateAsync(appuser, "P@ssword!1");
-                    if (result.Succeeded)
-                    {
-                        await _context.SaveChangesAsync();
-                        return Ok("Bursary Application and user has been Created");
-                    }
-                    else
-                    {
-                        return BadRequest(result.Errors);
+                        var result =  await _userRepository.CreateAsync(appuser, "P@ssword!1");
+                        if (result.Succeeded)
+                        {
+                            await _context.SaveChangesAsync();
+                            return Ok("Bursary Application and user has been Created");
+                        }
+                        else
+                        {
+                            return BadRequest(result.Errors);
+                        }
                     }
                 }
                 
