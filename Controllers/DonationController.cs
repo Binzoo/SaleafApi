@@ -99,16 +99,14 @@ namespace SeleafAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDonations([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            
-            var donations = await _donation.GetDonations();
-            var totalItems = donations.Count(); 
-            
-            var paginatedDonations = donations
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
 
-            var model = paginatedDonations.Select(d => new
+            var totalItems = await _donation.GetTotalDonationsCountAsync(); // Assuming this fetches total count efficiently from DB
+
+            var donations = await _donation.GetPaginatedDonations(pageNumber, pageSize); // Assuming this fetches paginated data from DB
+
+            var model = donations.Select(d => new
             {
                 UserName = d.AppUser?.UserName ?? "Unknown",
                 FirstName = d.AppUser?.FirstName ?? "Unknown",

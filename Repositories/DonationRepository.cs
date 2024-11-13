@@ -21,11 +21,26 @@ namespace SaleafApi.Repositories
         {
             var donations = await _context.Donations
                 .Include(d => d.AppUser)
-                .Where(d => d.isAnonymous == true)
                 .ToListAsync();
 
             return donations;
         }
+        
+        public async Task<List<Donation>> GetPaginatedDonations(int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1) pageNumber = 1;
+    
+            
+            int skip = (pageNumber - 1) * pageSize;
+
+            
+            return await _context.Donations
+                .OrderBy(d => d.CreatedAt).Include(d => d.AppUser) 
+                .Skip(skip)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
 
         public async Task<Donation> GetDonationById(int id)
         {
@@ -60,5 +75,11 @@ namespace SaleafApi.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        
+        public async Task<int> GetTotalDonationsCountAsync()
+        {
+            return await _context.Donations.CountAsync(); 
+        }
+
     }
 }

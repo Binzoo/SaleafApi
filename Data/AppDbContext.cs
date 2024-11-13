@@ -34,6 +34,7 @@ namespace SeleafAPI.Data
         public DbSet<OtherLiability> OtherLiabilities { get; set; }
 
         public DbSet<BankAccountInfo> BankAccountInfo { get; set; }
+        public DbSet<EventRegistration> EventRegistrations { get; set; }        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

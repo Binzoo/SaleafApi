@@ -176,6 +176,12 @@ namespace SeleafAPI.Controllers
             }
         }
         
+        [HttpGet("get-three-latest-events")]
+        public async Task<IActionResult> ThreeLatestEvents()
+        {
+            var threeEvents = await _eventRepo.GetThreeLatestEvent();
+            return Ok(threeEvents);
+        }
 
         [HttpGet("userevents")]
         public async Task<IActionResult> GetUserEvent()

@@ -26,4 +26,9 @@ public class EventRepository : IEvent
         return await _context.Events
             .ToListAsync();
     }
+
+    public async Task<List<Event>> GetThreeLatestEvent()
+    {
+        return await _context.Events.Where(e => e.Status == "Upcoming").Take(3).ToListAsync();
+    }
 }

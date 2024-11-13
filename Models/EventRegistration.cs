@@ -15,4 +15,6 @@ public class EventRegistration
     public AppUser? User { get; set; }  
     
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;  
+    public bool IsPaid { get; set; } = false;
+    public string? PaymentId { get; set; }
 }
