@@ -81,6 +81,67 @@ namespace SeleafAPI.Repositories
         }
         
         
+         public async Task<string> InitiateCheckoutAsyncEvent(EventRegistration donation, string cancelUrl, string successUrl, string failureUrl)
+        {
+
+            var builder = WebApplication.CreateBuilder();
+            var yocoSecretKey = builder.Configuration["Yoco:SecretKey"];
+            
+            var eventAmount = await _context.Events.Where(e => e.EventId == donation.EventId).FirstOrDefaultAsync();
+            
+            var checkoutData = new
+            {
+                amount = eventAmount.EventPrice * 100,
+                currency = "ZAR",
+                cancelUrl = cancelUrl,
+                successUrl = successUrl,
+                failureUrl = failureUrl,
+            };
+
+            var content = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(checkoutData),
+                Encoding.UTF8, "application/json");
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {yocoSecretKey}");
+
+            try
+            {
+                var requestUri = "https://payments.yoco.com/api/checkouts";
+                var response = await _httpClient.PostAsync(requestUri, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var jsonResponse = System.Text.Json.JsonDocument.Parse(responseContent);
+                    var redirectUrl = jsonResponse.RootElement.GetProperty("redirectUrl").GetString();
+
+                    var paymentId = jsonResponse.RootElement.GetProperty("id").GetString();
+                    donation.PaymentId = paymentId;
+                    await _context.SaveChangesAsync();
+
+                    return redirectUrl!;
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Yoco API Error: {errorContent}");
+                    throw new Exception($"Failed to initiate checkout: {errorContent}");
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request Error: {httpEx.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initiating checkout: {ex.Message}");
+                throw;
+            }
+        }
+        
+        
 
 
         public async Task<string> GetAppUserIdByPaymentId(string paymentId)
@@ -93,6 +154,18 @@ namespace SeleafAPI.Repositories
             }
 
             return donation.AppUserId!;
+        }
+        
+        public async Task<string> GetAppUserIdByPaymentIdEvent(string paymentId)
+        {
+            var eventRegistration = await _context.EventRegistrations.FirstOrDefaultAsync(e => e.PaymentId == paymentId);
+
+            if (eventRegistration == null)
+            {
+                return null!;
+            }
+
+            return eventRegistration.UserId!;
         }
     }
 

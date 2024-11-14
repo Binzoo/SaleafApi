@@ -10,5 +10,8 @@ namespace SeleafAPI.Interfaces
     {
         Task<string> InitiateCheckoutAsync(Donation donation, string cancelUrl, string successUrl, string failureUrl);
         Task<string> GetAppUserIdByPaymentId(string paymentId);
+        Task<string> InitiateCheckoutAsyncEvent(EventRegistration donation, string cancelUrl, string successUrl,
+            string failureUrl);
+        Task<string> GetAppUserIdByPaymentIdEvent(string paymentId);
     }
 }

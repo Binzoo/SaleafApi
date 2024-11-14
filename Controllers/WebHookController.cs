@@ -15,13 +15,15 @@ namespace SeleafAPI.Controllers
     public class WebHookController : ControllerBase
     {
         private readonly IDonation _donationRepository;
+        private readonly IEventRegistration _eventRegistration;
         private readonly IEmailSender _emailService;
         private readonly IUserRepository _user;
         private readonly IPayment _paymentRepository;
         private readonly IPdf _pdf;
         private readonly AppDbContext _donorCertificateInfo;
 
-        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository, IPdf pdf, AppDbContext donorCertificateInfo)
+        public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository, IPdf pdf, AppDbContext donorCertificateInfo,
+            IEventRegistration eventRegistration)
         {
             _donationRepository = donationRepository;
             _emailService = emailService;
@@ -30,6 +32,7 @@ namespace SeleafAPI.Controllers
             _pdf = pdf;
             _donationRepository = donationRepository;
             _donorCertificateInfo = donorCertificateInfo;
+            _eventRegistration = eventRegistration;
         }
 
         // POST: api/webhook/yoco
@@ -45,6 +48,26 @@ namespace SeleafAPI.Controllers
             if (webhookEvent.Type == "payment.succeeded")
             {
                 var checkoutId = webhookEvent.Payload!.Metadata!.CheckoutId;
+
+                var eventreg = await _eventRegistration.GetEventRegistrationsByPaymentIdAsync(checkoutId);
+
+                if (eventreg != null)
+                {
+                    await _eventRegistration.UpdateEventRegistrationsStatusAsync(checkoutId!, true);
+                    var userIdEvent = await _paymentRepository.GetAppUserIdByPaymentIdEvent(checkoutId!);
+                    var paidEventUser = await _user.FindByIdAsync(userIdEvent);
+
+                    if (paidEventUser == null)
+                    {
+                        return BadRequest("No user found.");
+                    }
+
+                    string eventBody = SuccessEventEmail();
+
+                    await _emailService.SendEmailAsync(paidEventUser.Email, "Thank you for registering for event.",eventBody);
+                    return Ok();
+                }
+                
                 // Update the donation status to "Paid"
                 await _donationRepository.UpdateDonationStatusAsync(checkoutId!, true);
                 var userId = await _paymentRepository.GetAppUserIdByPaymentId(checkoutId!);
@@ -53,7 +76,133 @@ namespace SeleafAPI.Controllers
                 {
                     return BadRequest("No user found.");
                 }
-                string body = @"
+
+                string body = SuccessEmail();
+                
+                var certificateInfo = await _donorCertificateInfo.DonorCertificateInfos.FirstOrDefaultAsync(e => e.AppUserId == userId);
+                var donationInfo = await _donationRepository.GetDonationByPaymentIdAsync(checkoutId!);
+
+                AllDonorCertificateInfo allDonorCertificate = new AllDonorCertificateInfo
+                {
+                    RefNo = donationInfo.Id,
+                    FirstName = paidUser.FirstName,
+                    LastName = paidUser.LastName,
+                    IdentityNoOrCompanyRegNo = certificateInfo!.IdentityNoOrCompanyRegNo,
+                    IncomeTaxNumber = certificateInfo.IncomeTaxNumber,
+                    Address = certificateInfo.Address,
+                    PhoneNumber = certificateInfo.PhoneNumber,
+                    Amount = donationInfo.Amount,
+                    Email = paidUser.Email!,
+                    DateofReceiptofDonation = donationInfo.CreatedAt
+                };
+
+                var pdfStream = _pdf.GetPdf(allDonorCertificate);
+                await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream);
+            }
+            else if (webhookEvent.Type == "payment.failed")
+            {
+                var checkoutId = webhookEvent.Payload!.Metadata!.CheckoutId;
+                
+                var eventreg = await _eventRegistration.GetEventRegistrationsByPaymentIdAsync(checkoutId);
+                if (eventreg != null)
+                {
+                    await _eventRegistration.UpdateEventRegistrationsStatusAsync(checkoutId!, true);
+                    var userIdEvent = await _paymentRepository.GetAppUserIdByPaymentIdEvent(checkoutId!);
+                    var paidEventUser = await _user.FindByIdAsync(userIdEvent);
+
+                    if (paidEventUser == null)
+                    {
+                        return BadRequest("No user found.");
+                    }
+
+                    string eventBody = FailedEventEmail();
+
+                    await _emailService.SendEmailAsync(paidEventUser.Email, "Thank you for registering for event.",eventBody);
+                    return Ok();
+                }
+                var userId = await _paymentRepository.GetAppUserIdByPaymentId(checkoutId!);
+                var paidUser = await _user.FindByIdAsync(userId);
+                if (paidUser == null)
+                {
+                    return BadRequest("No user found.");
+                }
+                
+                string body = BadEmail();
+                
+
+                await _emailService.SendEmailAsync(paidUser.Email!, "SALEAF", body);
+            }
+            else
+            {
+                return BadRequest($"Unhandled event type: {webhookEvent.Type}");
+            }
+            return Ok();
+        }
+        
+        private string FailedEventEmail()
+{
+    string body = @"
+                            <html>
+                            <head>
+                                <style>
+                                    .email-content {
+                                        font-family: Arial, sans-serif;
+                                        color: #333;
+                                    }
+                                    .email-header {
+                                        background-color: #f8f8f8;
+                                        padding: 20px;
+                                        text-align: center;
+                                        border-bottom: 1px solid #ddd;
+                                    }
+                                    .email-body {
+                                        padding: 20px;
+                                    }
+                                    .email-footer {
+                                        background-color: #f8f8f8;
+                                        padding: 10px;
+                                        text-align: center;
+                                        font-size: 12px;
+                                        color: #888;
+                                        border-top: 1px solid #ddd;
+                                    }
+                                    .button {
+                                        background-color: #dc3545;
+                                        color: white;
+                                        padding: 10px 20px;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        display: inline-block;
+                                        border-radius: 5px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class='email-content'>
+                                    <div class='email-header'>
+                                        <h1>Event Registration Failed</h1>
+                                    </div>
+                                    <div class='email-body'>
+                                        <p>Dear valued participant,</p>
+                                        <p>Unfortunately, your event registration was not successful.</p>
+                                        <p>We apologize for any inconvenience caused and invite you to try registering again.</p>
+                                        <p>If you continue to experience issues or have any questions, please <a href='#'>contact us</a>.</p>
+                                        <p>Best regards,<br/>The SALEAF Team</p>
+                                        <a href='#' class='button'>Try Again</a>
+                                    </div>
+                                    <div class='email-footer'>
+                                        <p>&copy; 2024 SALEAF. All rights reserved.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
+    return body;
+}
+
+        
+        private  string SuccessEmail()
+    {
+        string body = @"
                             <html>
                             <head>
                                 <style>
@@ -108,37 +257,73 @@ namespace SeleafAPI.Controllers
                                 </div>
                             </body>
                             </html>";
+        return body;
+    }
+        
+        private string SuccessEventEmail()
+{
+    string body = @"
+                            <html>
+                            <head>
+                                <style>
+                                    .email-content {
+                                        font-family: Arial, sans-serif;
+                                        color: #333;
+                                    }
+                                    .email-header {
+                                        background-color: #f8f8f8;
+                                        padding: 20px;
+                                        text-align: center;
+                                        border-bottom: 1px solid #ddd;
+                                    }
+                                    .email-body {
+                                        padding: 20px;
+                                    }
+                                    .email-footer {
+                                        background-color: #f8f8f8;
+                                        padding: 10px;
+                                        text-align: center;
+                                        font-size: 12px;
+                                        color: #888;
+                                        border-top: 1px solid #ddd;
+                                    }
+                                    .button {
+                                        background-color: #28a745;
+                                        color: white;
+                                        padding: 10px 20px;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        display: inline-block;
+                                        border-radius: 5px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class='email-content'>
+                                    <div class='email-header'>
+                                        <h1>Event Registration Successful!</h1>
+                                    </div>
+                                    <div class='email-body'>
+                                        <p>Dear valued participant,</p>
+                                        <p>Thank you for registering for our event.</p>
+                                        <p>We are excited to have you join us and look forward to an amazing experience together.</p>
+                                        <p>For more details or if you have any questions, please <a href='#'>contact us</a>.</p>
+                                        <p>Best regards,<br/>The SALEAF Team</p>
+                                        <a href='#' class='button'>View Event Details</a>
+                                    </div>
+                                    <div class='email-footer'>
+                                        <p>&copy; 2024 SALEAF. All rights reserved.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
+    return body;
+}
 
-                var certificateInfo = await _donorCertificateInfo.DonorCertificateInfos.FirstOrDefaultAsync(e => e.AppUserId == userId);
-                var donationInfo = await _donationRepository.GetDonationByPaymentIdAsync(checkoutId!);
 
-                AllDonorCertificateInfo allDonorCertificate = new AllDonorCertificateInfo
-                {
-                    RefNo = donationInfo.Id,
-                    FirstName = paidUser.FirstName,
-                    LastName = paidUser.LastName,
-                    IdentityNoOrCompanyRegNo = certificateInfo!.IdentityNoOrCompanyRegNo,
-                    IncomeTaxNumber = certificateInfo.IncomeTaxNumber,
-                    Address = certificateInfo.Address,
-                    PhoneNumber = certificateInfo.PhoneNumber,
-                    Amount = donationInfo.Amount,
-                    Email = paidUser.Email!,
-                    DateofReceiptofDonation = donationInfo.CreatedAt
-                };
-
-                var pdfStream = _pdf.GetPdf(allDonorCertificate);
-                await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream);
-            }
-            else if (webhookEvent.Type == "payment.failed")
-            {
-                var checkoutId = webhookEvent.Payload!.Metadata!.CheckoutId;
-                var userId = await _paymentRepository.GetAppUserIdByPaymentId(checkoutId!);
-                var paidUser = await _user.FindByIdAsync(userId);
-                if (paidUser == null)
-                {
-                    return BadRequest("No user found.");
-                }
-                string body = @"<html>
+        private string BadEmail()
+        {
+            string body = @"<html>
                                     <head>
                                         <style>
                                             .email-content {
@@ -193,19 +378,12 @@ namespace SeleafAPI.Controllers
                                     </body>
                                 </html>";
 
-                await _emailService.SendEmailAsync(paidUser.Email!, "SALEAF", body);
-            }
-            else
-            {
-                return BadRequest($"Unhandled event type: {webhookEvent.Type}");
-            }
-            return Ok();
+            return body;
         }
 
-
-
     }
-
+    
+    
     public class AllDonorCertificateInfo
     {
         public int RefNo { get; set; }

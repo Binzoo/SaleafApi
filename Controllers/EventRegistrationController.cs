@@ -16,11 +16,13 @@ public class EventRegistrationController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IPayment _payment;
+    private readonly IEventRegistration _eventRegistration;
 
-    public EventRegistrationController(AppDbContext context, IPayment payment)
+    public EventRegistrationController(AppDbContext context, IPayment payment, IEventRegistration eventRegistration)
     {
         _context = context;
-        _payment = payment; 
+        _payment = payment;
+        _eventRegistration = eventRegistration;
     }
 
     [Authorize]
@@ -31,13 +33,19 @@ public class EventRegistrationController : ControllerBase
         var eventReg = new EventRegistration()
         {
             UserId = userId,
-            EventId = model.EventId
+            EventId = model.EventId,
+            IsPaid = false
         };
-        
-        await _context.EventRegistrations.AddAsync(eventReg);
-        await _context.SaveChangesAsync();
-        
-        return Ok();
+        try
+        {
+            var redirectUrl = await _payment.InitiateCheckoutAsyncEvent(await _eventRegistration.CreateEventRegistrationsAsync(eventReg),
+                    model.CancelUrl!, model.SuccessUrl!, model.FailureUrl!);
+            return Ok(new { redirectUrl });
+        }
+        catch(Exception ex)
+        {
+            return StatusCode(500, $"Error processing the Event: {ex.Message}");
+        }
     }
     
     

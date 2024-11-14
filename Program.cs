@@ -162,6 +162,7 @@ builder.Services.AddScoped<IPayment, PaymentRepository>();
 builder.Services.AddScoped<IDonation, DonationRepository>();
 builder.Services.AddScoped<IPdf, PdfRepository>();
 builder.Services.AddScoped<IEvent, EventRepository>();
+builder.Services.AddScoped<IEventRegistration, EventRegistrationRepository>();
 
 
 
