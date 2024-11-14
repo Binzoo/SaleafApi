@@ -8,4 +8,5 @@ public interface IEvent
     Task<List<Event>> GetAdminEvent();
     
     Task<List<Event>> GetThreeLatestEvent();
+    Task<Event> GetEventById(int id);
 }

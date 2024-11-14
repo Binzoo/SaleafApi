@@ -14,15 +14,15 @@ namespace SeleafAPI.Controllers;
 [Route("[controller]")]
 public class EventRegistrationController : ControllerBase
 {
-    private readonly AppDbContext _context;
     private readonly IPayment _payment;
     private readonly IEventRegistration _eventRegistration;
+    private readonly IEvent _event;
 
-    public EventRegistrationController(AppDbContext context, IPayment payment, IEventRegistration eventRegistration)
+    public EventRegistrationController(AppDbContext context, IPayment payment, IEventRegistration eventRegistration, IEvent __event)
     {
-        _context = context;
         _payment = payment;
         _eventRegistration = eventRegistration;
+        _event = __event;
     }
 
     [Authorize]
@@ -30,11 +30,36 @@ public class EventRegistrationController : ControllerBase
     public async Task<ActionResult<EventRegistration>> RegisterEvent(EventRegistrationDTO model)
     {
         var userId = User.FindFirst("userId")?.Value;
+
+        var choosenEvent = await _event.GetEventById(model.EventId);
+        
+        bool userRegisterd = await _eventRegistration.UserAlreadyRegisteredForEvent(userId!, model.EventId);
+
+        if (userRegisterd)
+        {
+            return BadRequest(new 
+            {
+                Status = "Error",
+                Message = $"You have already registered for this event."
+            });
+        }
+        
+        if (model.Amount < choosenEvent.EventPrice)
+        {
+            return BadRequest(new 
+            {
+                Status = "Error",
+                Message = $"The entered amount {model.Amount} must be equal to or greater than the required amount {choosenEvent.EventPrice}."
+            });
+        }
+
         var eventReg = new EventRegistration()
         {
             UserId = userId,
             EventId = model.EventId,
-            IsPaid = false
+            Amount = model.Amount,
+            IsPaid = false,
+            Currecny = model.Currecny
         };
         try
         {
@@ -55,9 +80,9 @@ public class EventRegistrationController : ControllerBase
         if (pageNumber < 1) pageNumber = 1;
         if (pageSize < 1) pageSize = 10;
 
-        var totalItems = await _eventRegistration.GetTotalEventRegistrationsCountAsync(); // Assuming this fetches total count efficiently from DB
+        var totalItems = await _eventRegistration.GetTotalEventRegistrationsCountAsync(); 
 
-        var donations = await _eventRegistration.GetPaginatedEventRegistrations(pageNumber, pageSize); // Assuming this fetches paginated data from DB
+        var donations = await _eventRegistration.GetPaginatedEventRegistrations(pageNumber, pageSize); 
 
         var model = donations.Select(d => new
         {

@@ -91,8 +91,8 @@ namespace SeleafAPI.Repositories
             
             var checkoutData = new
             {
-                amount = eventAmount.EventPrice * 100,
-                currency = "ZAR",
+                amount = donation.Amount * 100,
+                currency = donation.Currecny,
                 cancelUrl = cancelUrl,
                 successUrl = successUrl,
                 failureUrl = failureUrl,
@@ -141,9 +141,7 @@ namespace SeleafAPI.Repositories
             }
         }
         
-        
-
-
+         
         public async Task<string> GetAppUserIdByPaymentId(string paymentId)
         {
             var donation = await _context.Donations.FirstOrDefaultAsync(e => e.PaymentId == paymentId);

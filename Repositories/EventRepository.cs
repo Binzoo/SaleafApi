@@ -31,4 +31,14 @@ public class EventRepository : IEvent
     {
         return await _context.Events.Where(e => e.Status == "Upcoming").Take(3).ToListAsync();
     }
+
+    public async Task<Event> GetEventById(int id)
+    {
+        var eventbyid = await _context.Events.FindAsync(id);
+        if (eventbyid == null)
+        {
+            return null;
+        }
+        return eventbyid;
+    }
 }

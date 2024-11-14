@@ -102,9 +102,9 @@ namespace SeleafAPI.Controllers
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
-            var totalItems = await _donation.GetTotalDonationsCountAsync(); // Assuming this fetches total count efficiently from DB
+            var totalItems = await _donation.GetTotalDonationsCountAsync(); 
 
-            var donations = await _donation.GetPaginatedDonations(pageNumber, pageSize); // Assuming this fetches paginated data from DB
+            var donations = await _donation.GetPaginatedDonations(pageNumber, pageSize); 
 
             var model = donations.Select(d => new
             {

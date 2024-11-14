@@ -38,6 +38,23 @@ public class EventRegistrationRepository : IEventRegistration
                 .ToListAsync();
         }
 
+        public async Task<bool> UserAlreadyRegisteredForEvent(string userId, int eventId)
+        {
+            var user = await _context.EventRegistrations.
+                Where(e => e.UserId == userId).
+                Where(e => e.EventId == eventId).
+                Where(e => e.IsPaid == true)
+                .FirstOrDefaultAsync();
+
+            if (user is not null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public async Task<EventRegistration> GetEventRegistrationsById(int id)
         {

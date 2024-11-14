@@ -163,6 +163,7 @@ builder.Services.AddScoped<IDonation, DonationRepository>();
 builder.Services.AddScoped<IPdf, PdfRepository>();
 builder.Services.AddScoped<IEvent, EventRepository>();
 builder.Services.AddScoped<IEventRegistration, EventRegistrationRepository>();
+builder.Services.AddScoped<IStudentProfileRepository, StudentProfileRepository>();
 
 
 

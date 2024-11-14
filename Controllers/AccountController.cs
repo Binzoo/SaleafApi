@@ -73,10 +73,7 @@ namespace SeleafAPI.Controllers
                 {
                     result = await _userRepository.AddToRoleAsync(user, "Sponsor");
                 }
-                else
-                {
-                    result = await _userRepository.AddToRoleAsync(user, "Student");
-                }
+               
 
                 // If the user creation and role assignment succeeded
                 if (result.Succeeded)
