@@ -48,5 +48,39 @@ public class EventRegistrationController : ControllerBase
         }
     }
     
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> GetDonations([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var totalItems = await _eventRegistration.GetTotalEventRegistrationsCountAsync(); // Assuming this fetches total count efficiently from DB
+
+        var donations = await _eventRegistration.GetPaginatedEventRegistrations(pageNumber, pageSize); // Assuming this fetches paginated data from DB
+
+        var model = donations.Select(d => new
+        {
+            UserName = d.User?.UserName ?? "Unknown",
+            FirstName = d.User?.FirstName ?? "Unknown",
+            LastName = d.User?.LastName ?? "Unknown",
+            d.PaymentId,
+            d.Event.EventName,
+            d.RegistrationDate,
+            d.IsPaid,
+        }).ToList();
+
+        var response = new
+        {
+            TotalItems = totalItems,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling((double)totalItems / pageSize),
+            Data = model
+        };
+
+        return Ok(response);
+    }
+    
     
 }

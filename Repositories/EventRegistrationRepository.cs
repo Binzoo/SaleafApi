@@ -31,7 +31,8 @@ public class EventRegistrationRepository : IEventRegistration
 
             
             return await _context.EventRegistrations
-                .OrderBy(d => d.RegistrationDate).Include(d => d.User) 
+                .OrderBy(d => d.RegistrationDate).Include(d => d.User)
+                .Include(d => d.Event)
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync();
