@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeleafAPI.Data;
@@ -12,9 +13,11 @@ using SeleafAPI.Data;
 namespace SeleafAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241116191521_Edited Student Profile")]
+    partial class EditedStudentProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -926,7 +929,7 @@ namespace SeleafAPI.Migrations
                     b.Property<string>("OnlineProfile")
                         .HasColumnType("text");
 
-                    b.Property<List<string>>("Skills")
+                    b.Property<string[]>("Skills")
                         .HasColumnType("text[]");
 
                     b.Property<string>("University")

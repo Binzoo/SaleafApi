@@ -32,6 +32,19 @@ public class StudentProfileRepository : IStudentProfileRepository
     }
 
 
+    public async Task<List<StudentProfile>> GetPaginatedStudentProfilesAsync(int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        int skip = (pageNumber - 1) * pageSize;
+
+        return await _context.StudentProfiles
+            .OrderBy(sp => sp.FirstName) 
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+
     public async Task CreateAsync(StudentProfile profile)
     {
         await _context.StudentProfiles.AddAsync(profile);

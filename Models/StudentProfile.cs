@@ -12,8 +12,7 @@ public class StudentProfile
     [ForeignKey("AppUser")]
     public string? AppUserId { get; set; }
 
-
-    public string? Skills { get; set; }
+    public List<string>? Skills { get; set; } 
     public List<string>? Achievements { get; set; }
     public string? Year { get; set; }
     public bool IsFinalYear { get; set; }
@@ -22,4 +21,5 @@ public class StudentProfile
     public string? University { get; set; }
     public string? Degree { get; set; }
     public string? OnlineProfile { get; set; }
+    public string? ImageUrl { get; set; } 
 }

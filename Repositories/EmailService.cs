@@ -1,5 +1,5 @@
 ﻿using System.Net.Mail;
-using MailKit.Net.Smtp;
+
 using MimeKit;
 using SeleafAPI.Interfaces;
 

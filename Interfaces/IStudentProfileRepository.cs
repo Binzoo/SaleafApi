@@ -1,5 +1,4 @@
 using SeleafAPI.Models;
-using SeleafAPI.Repositories;
 
 namespace SeleafAPI.Interfaces;
 
@@ -9,6 +8,7 @@ public interface IStudentProfileRepository
     Task CreateAsync(StudentProfile profile);
     Task UpdateAsync(StudentProfile profile);
     Task<IEnumerable<StudentProfile>> GetAllAsync(); 
-    
+
     Task<List<StudentProfile>> GetThreeStudentProfilesAsync();
+    Task<List<StudentProfile>> GetPaginatedStudentProfilesAsync(int pageNumber, int pageSize);
 }
