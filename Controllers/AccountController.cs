@@ -39,6 +39,9 @@ namespace SeleafAPI.Controllers
             _context = context;
         }
 
+        
+        
+        
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
@@ -315,6 +318,10 @@ namespace SeleafAPI.Controllers
 
             return BadRequest("Role already exists");
         }
+        
+        
+        
+        
 
         [HttpPost("assign-role/{userId}")]
         public async Task<IActionResult> AssignRole(string userId, [FromBody] UserRoleDTO model)
@@ -431,6 +438,43 @@ namespace SeleafAPI.Controllers
             }
 
             return Ok("Password has been reset successfully.");
+        }
+        
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUserAdmin(string id)
+        {
+            var result = await _userRepository.DeleteUserAsync(id);
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "User deleted successfully." });
+            }
+            else
+            {
+                // Aggregate errors
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                return StatusCode(500, new { Message = "Error deleting user.", Errors = errors });
+            }
+        }
+        
+        
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var userId = User.FindFirst("userId")?.Value;
+
+            var result = await _userRepository.DeleteUserAsync(userId);
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "User deleted successfully." });
+            }
+            else
+            {
+                // Aggregate errors
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                return StatusCode(500, new { Message = "Error deleting user.", Errors = errors });
+            }
         }
 
         private async Task<bool> ValidateResetCodeAsync(string userId, string submittedCode)

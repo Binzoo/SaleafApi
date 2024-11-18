@@ -21,6 +21,9 @@ namespace SeleafAPI.Interfaces
         Task UpdateRefreshTokenAsync(RefreshToken token);
 
         Task SaveRefreshTokenAsync(RefreshToken token);
+        
+        Task<IdentityResult> DeleteUserAsync(string userId);
+
 
     }
 }
