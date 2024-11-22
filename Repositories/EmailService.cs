@@ -55,7 +55,7 @@ namespace SeleafAPI.Repositories
             }
         }
 
-        public async Task SendEmailAsyncWithAttachment(string to, string subject, string info, MemoryStream pdfStream)
+        public async Task SendEmailAsyncWithAttachment(string to, string subject, string info, MemoryStream pdfStream, string attachmentName)
         {
             // Validate the recipient email address
             try
@@ -83,7 +83,7 @@ namespace SeleafAPI.Repositories
                 Content = new MimeContent(pdfStream, ContentEncoding.Default),
                 ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
                 ContentTransferEncoding = ContentEncoding.Base64,
-                FileName = "Section 18A.pdf"
+                FileName = attachmentName
             };
 
             var multipart = new Multipart("mixed");

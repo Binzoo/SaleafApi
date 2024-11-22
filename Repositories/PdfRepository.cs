@@ -6,6 +6,8 @@ using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.IO;
 using SaleafApi.Interfaces;
 using SeleafAPI.Controllers;
+using SeleafAPI.Data;
+using SeleafAPI.Models.DTO;
 
 namespace SaleafApi.Repositories
 {
@@ -43,6 +45,52 @@ namespace SaleafApi.Repositories
             memoryStream.Position = 0;
             return memoryStream;
         }
+
+        public MemoryStream GenerateEventPdfWithQrCode(EventRegistrationDTO registrationInfo, byte[] qrCodeBytes)
+        {
+            // Path to the template PDF file
+            string sourceFile = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EventRegistrationTemplate.pdf");
+
+            if (!System.IO.File.Exists(sourceFile))
+            {
+                throw new FileNotFoundException("PDF template not found.");
+            }
+
+            var memoryStream = new MemoryStream();
+
+            using (var document = PdfReader.Open(sourceFile, PdfDocumentOpenMode.Modify))
+            {
+                PdfPage page = document.Pages[0];
+
+                using (var gfx = XGraphics.FromPdfPage(page))
+                {
+                    var font = new XFont("Arial", 10, XFontStyle.Regular);
+
+                    // Add registration information
+                    gfx.DrawString($"First Name: {registrationInfo.FristName}", font, XBrushes.Black, new XRect(100, 150, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"Last Name: {registrationInfo.LastName}", font, XBrushes.Black, new XRect(100, 170, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"Phone Number: {registrationInfo.PhoneNumber}", font, XBrushes.Black, new XRect(100, 190, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"Number of Participants: {registrationInfo.NumberOfParticipant}", font, XBrushes.Black, new XRect(100, 210, page.Width, page.Height), XStringFormats.TopLeft);
+
+                    // Embed the QR code in the PDF
+                    if (qrCodeBytes != null)
+                    {
+                        Func<Stream> qrStreamFunc = () => new MemoryStream(qrCodeBytes);
+                        var qrImage = XImage.FromStream(qrStreamFunc);
+                        gfx.DrawImage(qrImage, new XRect(400, 150, 150, 150)); // Adjust position and size as needed
+                    }
+                }
+
+                document.Save(memoryStream, false);
+            }
+
+            memoryStream.Position = 0; // Reset stream position to the beginning
+            return memoryStream;
+        }
+
+
+
+
 
         private string NumberToWords(double number)
         {

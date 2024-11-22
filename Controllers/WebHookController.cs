@@ -8,6 +8,7 @@ using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 
 using QRCoder;
+using SeleafAPI.Models.DTO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
@@ -26,9 +27,12 @@ namespace SeleafAPI.Controllers
         private readonly IPayment _paymentRepository;
         private readonly IPdf _pdf;
         private readonly AppDbContext _donorCertificateInfo;
+        private readonly IS3Service _S3Service;
+        private readonly string _awsRegion;
+        private readonly string _bucketName;
 
         public WebHookController(IDonation donationRepository, IEmailSender emailService, IUserRepository user, IPayment paymentRepository, IPdf pdf, AppDbContext donorCertificateInfo,
-            IEventRegistration eventRegistration)
+            IEventRegistration eventRegistration,  IS3Service S3Service, IConfiguration configuration)
         {
             _donationRepository = donationRepository;
             _emailService = emailService;
@@ -38,6 +42,9 @@ namespace SeleafAPI.Controllers
             _donationRepository = donationRepository;
             _donorCertificateInfo = donorCertificateInfo;
             _eventRegistration = eventRegistration;
+            _S3Service = S3Service;
+             _awsRegion = configuration["AWS_REGION"];  
+            _bucketName = configuration["AWS_BUCKET_NAME"]; 
         }
 
         // POST: api/webhook/yoco
@@ -61,21 +68,39 @@ namespace SeleafAPI.Controllers
                     var userIdEvent = await _paymentRepository.GetAppUserIdByPaymentIdEvent(checkoutId!);
                     var paidEventUser = await _user.FindByIdAsync(userIdEvent);
                     var eventUser = await _eventRegistration.GetEventRegistrationsByPaymentIdAsync(checkoutId!);
-                    string data = JsonConvert.SerializeObject(eventUser);
-                    string base64String = "";
-                    using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
-                    {
-                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
-                        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-                        byte[] qrCodeBytes = qrCode.GetGraphic(20);
-                        base64String = Convert.ToBase64String(qrCodeBytes);
-                    }
+                   
                     if (paidEventUser == null)
                     {
                         return BadRequest("No user found.");
                     }
-                    string eventBody = SuccessEventEmail(base64String);
-                    await _emailService.SendEmailAsync(paidEventUser.Email, "Thank you for registering for event.",eventBody);
+                    
+                    // Generate QR code bytes
+                    byte[] qrCodeBytes;
+                    using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+                    {
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(eventUser), QRCodeGenerator.ECCLevel.Q);
+                        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                        qrCodeBytes = qrCode.GetGraphic(20);
+                    }
+                    
+                    var registrationInfo = new EventRegistrationDTO
+                    {
+                        FristName = paidEventUser.FirstName,
+                        LastName = paidEventUser.LastName,
+                        PhoneNumber = paidEventUser.PhoneNumber,
+                        NumberOfParticipant = eventUser.NumberOfParticipant
+                    };
+                    
+                    
+                    var pdfStream2 = _pdf.GenerateEventPdfWithQrCode(registrationInfo, qrCodeBytes);
+                        
+                    await _emailService.SendEmailAsyncWithAttachment(
+                        paidEventUser.Email,
+                        "Event Registration Details",
+                        SuccessEventEmail(),
+                        pdfStream2, "Event Registration Details.pdf"
+                    );
+                     
                     return Ok();
                 }
                 
@@ -108,7 +133,7 @@ namespace SeleafAPI.Controllers
                 };
 
                 var pdfStream = _pdf.GetPdf(allDonorCertificate);
-                await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream);
+                await _emailService.SendEmailAsyncWithAttachment(paidUser.Email!, "SALEAF", body, pdfStream, "Section 18A.pdf");
             }
             else if (webhookEvent.Type == "payment.failed")
             {
@@ -271,67 +296,78 @@ namespace SeleafAPI.Controllers
         return body;
     }
         
- private string SuccessEventEmail(string qrCodeBase64)
+ private string SuccessEventEmail()
 {
     string body = $@"
-                            <html>
-                            <head>
-                                <style>
-                                    .email-content {{
-                                        font-family: Arial, sans-serif;
-                                        color: #333;
-                                    }}
-                                    .email-header {{
-                                        background-color: #f8f8f8;
-                                        padding: 20px;
-                                        text-align: center;
-                                        border-bottom: 1px solid #ddd;
-                                    }}
-                                    .email-body {{
-                                        padding: 20px;
-                                    }}
-                                    .email-footer {{
-                                        background-color: #f8f8f8;
-                                        padding: 10px;
-                                        text-align: center;
-                                        font-size: 12px;
-                                        color: #888;
-                                        border-top: 1px solid #ddd;
-                                    }}
-                                    .button {{
-                                        background-color: #28a745;
-                                        color: white;
-                                        padding: 10px 20px;
-                                        text-align: center;
-                                        text-decoration: none;
-                                        display: inline-block;
-                                        border-radius: 5px;
-                                    }}
-                                </style>
-                            </head>
-                            <body>
-                                <div class='email-content'>
-                                    <div class='email-header'>
-                                        <h1>Event Registration Successful!</h1>
-                                    </div>
-                                    <div class='email-body'>
-                                        <p>Dear valued participant,</p>
-                                        <p>Thank you for registering for our event.</p>
-                                        <p>We are excited to have you join us and look forward to an amazing experience together.</p>
-                                        <p>Below is your QR code for the event:</p>
-                                        <img src='data:image/png;base64,{qrCodeBase64}' alt='Event QR Code' style='width: 200px; height: 200px;' />
-                                        <p>For more details or if you have any questions, please <a href='#'>contact us</a>.</p>
-                                        <p>Best regards,<br/>The SALEAF Team</p>
-                                        <a href='#' class='button'>View Event Details</a>
-                                    </div>
-                                    <div class='email-footer'>
-                                        <p>&copy; 2024 SALEAF. All rights reserved.</p>
-                                    </div>
-                                </div>
-                            </body>
-                            </html>";
+    <html>
+    <head>
+        <style>
+            .email-content {{
+                font-family: Arial, sans-serif;
+                color: #333;
+                max-width: 600px;
+                margin: auto;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
+            }}
+            .email-header {{
+                background-color: #4CAF50;
+                color: white;
+                padding: 20px;
+                text-align: center;
+            }}
+            .email-body {{
+                padding: 20px;
+                text-align: left;
+            }}
+            .email-footer {{
+                background-color: #f8f8f8;
+                padding: 10px;
+                text-align: center;
+                font-size: 12px;
+                color: #888;
+                border-top: 1px solid #ddd;
+            }}
+            .button {{
+                display: inline-block;
+                background-color: #28a745;
+                color: white;
+                padding: 10px 20px;
+                text-decoration: none;
+                font-size: 14px;
+                border-radius: 5px;
+                text-align: center;
+            }}
+            a.button:hover {{
+                background-color: #218838;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class='email-content'>
+            <div class='email-header'>
+                <h1>Event Registration Successful!</h1>
+            </div>
+            <div class='email-body'>
+                <p>Dear Valued Participant,</p>
+                <p>Thank you for registering for our event! We are thrilled to have you join us and look forward to an amazing experience together.</p>
+                <p>Your QR code for the event has been attached to this email as a PDF. Please download and keep it safe for event check-in.</p>
+                <p>If you have any questions or need further assistance, please <a href='#'>contact us</a>.</p>
+                <p>Best regards,<br/>The SALEAF Team</p>
+                <div style='text-align: center; margin-top: 20px;'>
+                    <a href='#' class='button'>View Event Details</a>
+                </div>
+            </div>
+            <div class='email-footer'>
+                <p>&copy; 2024 SALEAF. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>";
     return body;
 }
+
 
 
 

@@ -187,8 +187,8 @@ namespace SaleafApi.Controllers
                     };
                     var pdfStream = _pdf.GetPdf(allDonorCertificate);
                     await _emailService.SendEmailAsyncWithAttachment(user.Email!, "Manual Payment accepted.", Body(),
-                        pdfStream);
-                    return Ok(new { message = "Manual payment accepted." });
+                        pdfStream, "Manual Payment accepted");
+                    return Ok(new { message = "Manual payment accepted.pdf" });
                     
                 }
                 else
