@@ -7,6 +7,7 @@ using PdfSharpCore.Pdf.IO;
 using SaleafApi.Interfaces;
 using SeleafAPI.Controllers;
 using SeleafAPI.Data;
+using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
 
 namespace SaleafApi.Repositories
@@ -46,10 +47,10 @@ namespace SaleafApi.Repositories
             return memoryStream;
         }
 
-        public MemoryStream GenerateEventPdfWithQrCode(EventRegistrationDTO registrationInfo, byte[] qrCodeBytes)
+        public MemoryStream GenerateEventPdfWithQrCode(EventRegistration registrationInfo, byte[] qrCodeBytes)
         {
             // Path to the template PDF file
-            string sourceFile = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EventRegistrationTemplate.pdf");
+            string sourceFile = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "EventReg.pdf");
 
             if (!System.IO.File.Exists(sourceFile))
             {
@@ -67,12 +68,14 @@ namespace SaleafApi.Repositories
                     var font = new XFont("Arial", 10, XFontStyle.Regular);
 
                     // Add registration information
-                    gfx.DrawString($"First Name: {registrationInfo.FristName}", font, XBrushes.Black, new XRect(100, 150, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"First Name: {registrationInfo.FirstName}", font, XBrushes.Black, new XRect(100, 150, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"Last Name: {registrationInfo.LastName}", font, XBrushes.Black, new XRect(100, 170, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"Phone Number: {registrationInfo.PhoneNumber}", font, XBrushes.Black, new XRect(100, 190, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"Number of Participants: {registrationInfo.NumberOfParticipant}", font, XBrushes.Black, new XRect(100, 210, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"Amount: {registrationInfo.Amount}", font, XBrushes.Black, new XRect(100, 230, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"Currency: {registrationInfo.Currency}", font, XBrushes.Black, new XRect(100, 250, page.Width, page.Height), XStringFormats.TopLeft);
 
-                    // Embed the QR code in the PDF
+                        // Embed the QR code in the PDF
                     if (qrCodeBytes != null)
                     {
                         Func<Stream> qrStreamFunc = () => new MemoryStream(qrCodeBytes);

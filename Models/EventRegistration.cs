@@ -5,14 +5,13 @@ namespace SeleafAPI.Models;
 public class EventRegistration
 {
     public int Id { get; set; }  
-    public string FristName { get; set; }
+    public string FirstName { get; set; }
     public string LastName { get; set; }
     public string PhoneNumber { get; set; }
     public int NumberOfParticipant { get; set; }
     // Foreign key for Event
     public int EventId { get; set; }
     public Event? Event { get; set; }
-
     public string PacakageName { get; set; }    
 
     // Foreign key for User

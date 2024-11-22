@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using QRCoder;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
 
 namespace SeleafAPI.Controllers;
-
 
 
 [ApiController]
@@ -45,18 +44,18 @@ public class EventRegistrationController : ControllerBase
 
         if (userRegistered)
         {
-            return BadRequest(new 
-            {
+          return BadRequest(new 
+          {
                 Status = "Error",
                 Message = "You have already registered for this package."
-            });
+          });
         }
         
         // Create a new EventRegistration
         var eventReg = new EventRegistration
         {
             UserId = userId,
-            FristName = model.FristName,
+            FirstName = model.FirstName,
             LastName = model.LastName,
             NumberOfParticipant = model.NumberOfParticipant,
             PhoneNumber = model.PhoneNumber,
@@ -102,6 +101,8 @@ public class EventRegistrationController : ControllerBase
             d.PaymentId,
             d.Event.EventName,
             d.RegistrationDate,
+            d.PacakageName,
+            d.Amount,
             d.IsPaid,
         }).ToList();
 
@@ -113,8 +114,56 @@ public class EventRegistrationController : ControllerBase
             TotalPages = (int)Math.Ceiling((double)totalItems / pageSize),
             Data = model
         };
-
         return Ok(response);
+    }
+
+    [Authorize]
+    [HttpGet("get-logged-register-event")]
+    public async Task<IActionResult> GetRegisteredEvent()
+    {
+       var userid = User.FindFirst("userId")?.Value;
+       var eventRegistartionOfUser = await _eventRegistration.GetAllEventRegistrationsByUserAsync(userid);
+       return Ok(eventRegistartionOfUser);
+    }
+
+    [Authorize]
+    [HttpGet("generate-qr-code")]
+    public async Task<IActionResult> GenerateQRCodeForEventRegistration([FromQuery] int eventId)
+    {
+        try
+        {
+            var userId = User.FindFirst("userId")?.Value;
+            var eventRegistrationOfUser =
+                await _eventRegistration.GetEventRegistrationByUserIdEventIdAsync(eventId, userId);
+            if (eventRegistrationOfUser == null)
+            {
+                return NotFound("Event registration not found.");
+            }
+
+            string data = $"/EventRegistration/verify-ticket/{eventRegistrationOfUser.Id}";
+            byte[] qrCodeBytes;
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            {
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                qrCodeBytes = qrCode.GetGraphic(20);
+            }
+
+            return File(qrCodeBytes, "image/png");
+        }
+        catch(Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
+
+    
+    
+    [HttpGet("verify-ticket/{id}")]
+    public async Task<IActionResult> VerifyTask(int id)
+    {
+        var eventreg = await _eventRegistration.GetEventRegistrationsById(id);
+        return Ok(eventreg);
     }
     
     

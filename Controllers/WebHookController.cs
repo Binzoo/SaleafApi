@@ -8,6 +8,7 @@ using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 
 using QRCoder;
+using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -74,23 +75,26 @@ namespace SeleafAPI.Controllers
                         return BadRequest("No user found.");
                     }
                     
-                    // Generate QR code bytes
+                    string data = "/EventRegistration/verify-ticket/" + eventreg.Id;
+                    
                     byte[] qrCodeBytes;
                     using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
                     {
-                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(eventUser), QRCodeGenerator.ECCLevel.Q);
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
                         PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
                         qrCodeBytes = qrCode.GetGraphic(20);
                     }
                     
-                    var registrationInfo = new EventRegistrationDTO
+                    var registrationInfo = new EventRegistration
                     {
-                        FristName = paidEventUser.FirstName,
-                        LastName = paidEventUser.LastName,
-                        PhoneNumber = paidEventUser.PhoneNumber,
-                        NumberOfParticipant = eventUser.NumberOfParticipant
+                        FirstName = eventUser.FirstName,
+                        LastName = eventUser.LastName,
+                        PhoneNumber = eventUser.PhoneNumber,
+                        NumberOfParticipant = eventUser.NumberOfParticipant,
+                        Event = eventUser.Event,
+                        Amount = eventUser.Amount,
+                        Currency = eventUser.Currency
                     };
-                    
                     
                     var pdfStream2 = _pdf.GenerateEventPdfWithQrCode(registrationInfo, qrCodeBytes);
                         

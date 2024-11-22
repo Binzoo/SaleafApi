@@ -5,7 +5,7 @@ namespace SeleafAPI.Models.DTO;
 public class EventRegistrationDTO
 {
     [Required]
-    public string FristName { get; set; }
+    public string FirstName { get; set; }
 
     [Required]
     public string LastName { get; set; }

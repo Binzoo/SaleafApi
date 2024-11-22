@@ -1917,3 +1917,4 @@ c:/Users/binam/Downloads/WorkIntegreted/SaleafApi/bin/Debug/net8.0/de/PdfSharpCo
 /Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/bin/Debug/net8.0/zh-TW/Hangfire.Core.resources.dll
 /Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/bin/Debug/net8.0/zh/Hangfire.Core.resources.dll
 /Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/bin/Debug/net8.0/Swashbuckle.AspNetCore.Annotations.dll
+/Users/binamrathapa/Desktop/WorkIntegratedPOE/SaleafApi/bin/Debug/net8.0/QRCoder.dll

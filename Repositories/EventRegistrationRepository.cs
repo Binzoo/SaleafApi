@@ -67,13 +67,36 @@ public class EventRegistrationRepository : IEventRegistration
 
         public async Task<EventRegistration> GetEventRegistrationsById(int id)
         {
-            var eventRegistration = await _context.EventRegistrations.FindAsync(id);
+            var eventRegistration = await _context.EventRegistrations
+                .Include(d => d.Event) // Include the Event entity
+                .FirstOrDefaultAsync(d => d.Id == id);
             if (eventRegistration == null)
             {
                 return null;
             }
             return eventRegistration;
         }
+
+        public async Task<List<EventRegistration>> GetAllEventRegistrationsByUserAsync(string userId)
+        {
+            return await _context.EventRegistrations
+                .Include(e => e.Event) 
+                .Where(e => e.UserId == userId) 
+                .ToListAsync(); 
+        }
+
+        public async Task<EventRegistration> GetEventRegistrationByUserIdEventIdAsync(int eventId, string userId)
+        {
+            var eventRegistration = await _context.EventRegistrations.Include(e => e.Event).Where(e => e.EventId == eventId).Where(
+                u => u.UserId == userId
+            ).FirstOrDefaultAsync();
+            if (eventRegistration == null)
+            {
+                return null;
+            }
+            return eventRegistration;
+        }
+
 
         public async Task<EventRegistration> CreateEventRegistrationsAsync(EventRegistration eventRegistration)
         {
@@ -103,4 +126,5 @@ public class EventRegistrationRepository : IEventRegistration
         {
             return await _context.EventRegistrations.CountAsync(); 
         }
+
 }
