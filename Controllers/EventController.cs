@@ -25,7 +25,7 @@ namespace SeleafAPI.Controllers
             _awsRegion = configuration["AWS_REGION"];
             _bucketName = configuration["AWS_BUCKET_NAME"];
         }
-
+        
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateEvent([FromForm] EventDTO eventDto)
@@ -35,11 +35,11 @@ namespace SeleafAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Validate that EndDateTime is not earlier than StartDateTime
             if (eventDto.EndDateTime < eventDto.StartDateTime)
             {
                 return BadRequest("End date and time cannot be earlier than start date and time.");
             }
+
             string status = DetermineEventStatus(eventDto.StartDateTime, eventDto.EndDateTime);
 
             string? eventImageUrl = null;
@@ -47,7 +47,6 @@ namespace SeleafAPI.Controllers
             if (eventDto.EventImageFile != null && eventDto.EventImageFile.Length > 0)
             {
                 var fileName = $"events/{Guid.NewGuid()}-{eventDto.EventImageFile.FileName}";
-
                 try
                 {
                     using (var memoryStream = new MemoryStream())
@@ -63,118 +62,97 @@ namespace SeleafAPI.Controllers
                 }
             }
 
-            string formattedStartDate = eventDto.StartDateTime.ToString("dd MMMM yyyy");
-            string formattedEndDate = eventDto.EndDateTime.ToString("dd MMMM yyyy");
-
-            string startTime = eventDto.StartDateTime.ToString("HH:mm");
-            string endTime = eventDto.EndDateTime.ToString("HH:mm");
-
-            // Create and populate the Event entity
             var newEvent = new Event
             {
                 EventName = eventDto.EventName,
                 EventDescription = eventDto.EventDescription,
                 Location = eventDto.Location,
-                StartDate = formattedStartDate,
-                EndDate = formattedEndDate,
-                StartTime = startTime,
-                EndTime = endTime,
+                StartDate = eventDto.StartDateTime.ToString("dd MMMM yyyy"),
+                EndDate = eventDto.EndDateTime.ToString("dd MMMM yyyy"),
+                StartTime = eventDto.StartDateTime.ToString("HH:mm"),
+                EndTime = eventDto.EndDateTime.ToString("HH:mm"),
                 Status = status,
-                EventPrice = eventDto.EventPrice,
                 Publish = eventDto.Publish,
-                EventImageUrl = eventImageUrl
+                EventImageUrl = eventImageUrl,
+                Packages = eventDto.Packages.Select(p => new Package
+                {
+                    PackageName = p.PackageName,
+                    PackagePrice = p.PackagePrice,
+                }).ToList()
             };
 
-            // Save the new event to the database
             await _repository.AddAsync(newEvent);
 
-            return Ok(new
-            {
-                message = "Event created successfully",
-                Event = newEvent
-            });
+            return Ok(new { message = "Event created successfully", Event = newEvent });
         }
+
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEvent([FromForm] EventDTO eventDto, int id)
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateEvent([FromForm] EventDTO eventDto, int id)
+{
+    if (!ModelState.IsValid)
+    {
+        return BadRequest(ModelState);
+    }
+
+    var existingEvent = await _repository.GetByIdAsync(id);
+    if (existingEvent == null)
+    {
+        return NotFound("Event does not exist.");
+    }
+
+    if (eventDto.EndDateTime < eventDto.StartDateTime)
+    {
+        return BadRequest("End date and time cannot be earlier than start date and time.");
+    }
+
+    string status = DetermineEventStatus(eventDto.StartDateTime, eventDto.EndDateTime);
+
+    if (eventDto.EventImageFile != null && eventDto.EventImageFile.Length > 0)
+    {
+        var fileName = $"events/{Guid.NewGuid()}-{eventDto.EventImageFile.FileName}";
+        try
         {
-            try
+            using (var memoryStream = new MemoryStream())
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                // Validate that EndDateTime is not earlier than StartDateTime
-                if (eventDto.EndDateTime < eventDto.StartDateTime)
-                {
-                    return BadRequest("End date and time cannot be earlier than start date and time.");
-                }
-
-                // Retrieve the existing event
-                var exist = await _repository.GetByIdAsync(id);
-
-                if (exist == null)
-                {
-                    return NotFound("Event does not exist.");
-                }
-
-                // Determine event status based on StartDateTime and EndDateTime
-                string status = DetermineEventStatus(eventDto.StartDateTime, eventDto.EndDateTime);
-
-                // Handle file upload if provided
-                if (eventDto.EventImageFile != null && eventDto.EventImageFile.Length > 0)
-                {
-                    var fileName = $"events/{Guid.NewGuid()}-{eventDto.EventImageFile.FileName}";
-
-                    try
-                    {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await eventDto.EventImageFile.CopyToAsync(memoryStream);
-                            await _S3Service.UploadFileAsync(memoryStream, fileName);
-                        }
-
-                        // Construct the URL for the uploaded image
-                        var eventImageUrl = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
-                        exist.EventImageUrl = eventImageUrl;
-                    }
-                    catch (Exception ex)
-                    {
-                        return StatusCode(500, $"An error occurred while uploading the image: {ex.Message}");
-                    }
-                }
-                string formattedStartDate = eventDto.StartDateTime.ToString("dd MMMM yyyy");
-                string formattedEndDate = eventDto.EndDateTime.ToString("dd MMMM yyyy");
-
-                string startTime = eventDto.StartDateTime.ToString("HH:mm");
-                string endTime = eventDto.EndDateTime.ToString("HH:mm");
-
-                // Update event properties
-                exist.EventName = eventDto.EventName;
-                exist.EventDescription = eventDto.EventDescription;
-                exist.Location = eventDto.Location;
-                exist.StartDate = formattedStartDate;
-                exist.EndDate = formattedEndDate;
-                exist.StartTime = startTime;
-                exist.EndTime = endTime;
-                exist.Status = status;
-                exist.EventPrice = eventDto.EventPrice;
-                exist.Publish = eventDto.Publish;
-
-                // Save changes to the database
-                await _repository.UpdateAsync(exist);
-                return Ok(new
-                {
-                    message = "Event updated successfully"
-                });
+                await eventDto.EventImageFile.CopyToAsync(memoryStream);
+                await _S3Service.UploadFileAsync(memoryStream, fileName);
             }
-            catch (Exception e)
-            {
-                return StatusCode(500, $"An error occurred while updating the event: {e.Message}");
-            }
+            existingEvent.EventImageUrl = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while uploading the image: {ex.Message}");
+        }
+    }
+
+    existingEvent.EventName = eventDto.EventName;
+    existingEvent.EventDescription = eventDto.EventDescription;
+    existingEvent.Location = eventDto.Location;
+    existingEvent.StartDate = eventDto.StartDateTime.ToString("dd MMMM yyyy");
+    existingEvent.EndDate = eventDto.EndDateTime.ToString("dd MMMM yyyy");
+    existingEvent.StartTime = eventDto.StartDateTime.ToString("HH:mm");
+    existingEvent.EndTime = eventDto.EndDateTime.ToString("HH:mm");
+    existingEvent.Status = status;
+    existingEvent.Publish = eventDto.Publish;
+
+    // Update packages
+    existingEvent.Packages.Clear();
+    foreach (var packageDto in eventDto.Packages)
+    {
+        existingEvent.Packages.Add(new Package
+        {
+            PackageName = packageDto.PackageName,
+            PackagePrice = packageDto.PackagePrice,
+        });
+    }
+
+    await _repository.UpdateAsync(existingEvent);
+
+    return Ok(new { message = "Event updated successfully", Event = existingEvent });
+}
+
         
         [HttpGet("get-three-latest-events")]
         public async Task<IActionResult> ThreeLatestEvents()

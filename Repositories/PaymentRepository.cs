@@ -92,7 +92,7 @@ namespace SeleafAPI.Repositories
             var checkoutData = new
             {
                 amount = donation.Amount * 100,
-                currency = donation.Currecny,
+                currency = donation.Currency,
                 cancelUrl = cancelUrl,
                 successUrl = successUrl,
                 failureUrl = failureUrl,

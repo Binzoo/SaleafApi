@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeleafAPI.Data;
@@ -12,9 +13,11 @@ using SeleafAPI.Data;
 namespace SeleafAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241122081527_Added event pacakages")]
+    partial class Addedeventpacakages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -690,29 +693,13 @@ namespace SeleafAPI.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("FristName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("NumberOfParticipant")
+                    b.Property<int>("PackageId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("PacakageName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("PaymentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("RegistrationDate")
@@ -724,6 +711,8 @@ namespace SeleafAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("PackageId");
 
                     b.HasIndex("UserId");
 
@@ -881,6 +870,9 @@ namespace SeleafAPI.Migrations
 
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PackageDescription")
+                        .HasColumnType("text");
 
                     b.Property<string>("PackageName")
                         .IsRequired()
@@ -1116,11 +1108,19 @@ namespace SeleafAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SeleafAPI.Models.Package", "Package")
+                        .WithMany()
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SeleafAPI.Data.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("Event");
+
+                    b.Navigation("Package");
 
                     b.Navigation("User");
                 });

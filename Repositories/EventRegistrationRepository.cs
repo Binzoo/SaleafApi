@@ -13,6 +13,15 @@ public class EventRegistrationRepository : IEventRegistration
             _context = context;
         }
 
+        
+        public async Task<bool> UserAlreadyRegisteredForPackage(string userId, int eventId, string pacakageName)
+        {
+            return await _context.EventRegistrations.AnyAsync(r => 
+                r.UserId == userId && 
+                r.EventId == eventId && 
+                r.PacakageName == pacakageName);
+        }
+    
         public async Task<List<EventRegistration>> GetEventRegistrationsAsync()
         {
             var eventRegistration = await _context.EventRegistrations

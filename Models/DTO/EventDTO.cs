@@ -1,8 +1,11 @@
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace SeleafAPI.Models.DTO;
+
+using Microsoft.AspNetCore.Http;
+using Swashbuckle.AspNetCore.Annotations;
 
 public class EventDTO
 {
@@ -16,18 +19,16 @@ public class EventDTO
     public string? Location { get; set; }
 
     [Required(ErrorMessage = "StartDateTime is required")]
-    [DataType(DataType.DateTime, ErrorMessage = "StartDateTime must be a valid date and time")]
     public DateTime StartDateTime { get; set; }
 
     [Required(ErrorMessage = "EndDateTime is required")]
-    [DataType(DataType.DateTime, ErrorMessage = "EndDateTime must be a valid date and time")]
     public DateTime EndDateTime { get; set; }
-
-    [Required(ErrorMessage = "Event Price is required")]
-    [Range(0, double.MaxValue, ErrorMessage = "EventPrice must be a positive value")]
-    public double EventPrice { get; set; }
 
     public bool Publish { get; set; }
 
+    [SwaggerSchema("Upload an image file for the event")]
     public IFormFile? EventImageFile { get; set; }
+
+    [Required(ErrorMessage = "Packages are required")]
+    public List<PackageDTO> Packages { get; set; } = new();
 }

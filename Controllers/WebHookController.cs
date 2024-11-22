@@ -1,13 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Drawing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using QRCoder;
 using SaleafApi.Interfaces;
-using SaleafApi.Models;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
+
+using QRCoder;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Formats.Png;
+
+
 
 namespace SeleafAPI.Controllers
 {
@@ -39,7 +44,6 @@ namespace SeleafAPI.Controllers
         [HttpPost("api/webhook/yoco")]
         public async Task<IActionResult> YocoWebhook([FromBody] YocoWebhookEvent webhookEvent)
         {
-            System.Console.WriteLine(webhookEvent);
             if (webhookEvent == null || string.IsNullOrEmpty(webhookEvent.Type))
             {
                 return BadRequest("Invalid webhook event data.");
@@ -56,14 +60,21 @@ namespace SeleafAPI.Controllers
                     await _eventRegistration.UpdateEventRegistrationsStatusAsync(checkoutId!, true);
                     var userIdEvent = await _paymentRepository.GetAppUserIdByPaymentIdEvent(checkoutId!);
                     var paidEventUser = await _user.FindByIdAsync(userIdEvent);
-
+                    var eventUser = await _eventRegistration.GetEventRegistrationsByPaymentIdAsync(checkoutId!);
+                    string data = JsonConvert.SerializeObject(eventUser);
+                    string base64String = "";
+                    using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+                    {
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
+                        PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                        byte[] qrCodeBytes = qrCode.GetGraphic(20);
+                        base64String = Convert.ToBase64String(qrCodeBytes);
+                    }
                     if (paidEventUser == null)
                     {
                         return BadRequest("No user found.");
                     }
-
-                    string eventBody = SuccessEventEmail();
-
+                    string eventBody = SuccessEventEmail(base64String);
                     await _emailService.SendEmailAsync(paidEventUser.Email, "Thank you for registering for event.",eventBody);
                     return Ok();
                 }
@@ -260,34 +271,34 @@ namespace SeleafAPI.Controllers
         return body;
     }
         
-        private string SuccessEventEmail()
+ private string SuccessEventEmail(string qrCodeBase64)
 {
-    string body = @"
+    string body = $@"
                             <html>
                             <head>
                                 <style>
-                                    .email-content {
+                                    .email-content {{
                                         font-family: Arial, sans-serif;
                                         color: #333;
-                                    }
-                                    .email-header {
+                                    }}
+                                    .email-header {{
                                         background-color: #f8f8f8;
                                         padding: 20px;
                                         text-align: center;
                                         border-bottom: 1px solid #ddd;
-                                    }
-                                    .email-body {
+                                    }}
+                                    .email-body {{
                                         padding: 20px;
-                                    }
-                                    .email-footer {
+                                    }}
+                                    .email-footer {{
                                         background-color: #f8f8f8;
                                         padding: 10px;
                                         text-align: center;
                                         font-size: 12px;
                                         color: #888;
                                         border-top: 1px solid #ddd;
-                                    }
-                                    .button {
+                                    }}
+                                    .button {{
                                         background-color: #28a745;
                                         color: white;
                                         padding: 10px 20px;
@@ -295,7 +306,7 @@ namespace SeleafAPI.Controllers
                                         text-decoration: none;
                                         display: inline-block;
                                         border-radius: 5px;
-                                    }
+                                    }}
                                 </style>
                             </head>
                             <body>
@@ -307,6 +318,8 @@ namespace SeleafAPI.Controllers
                                         <p>Dear valued participant,</p>
                                         <p>Thank you for registering for our event.</p>
                                         <p>We are excited to have you join us and look forward to an amazing experience together.</p>
+                                        <p>Below is your QR code for the event:</p>
+                                        <img src='data:image/png;base64,{qrCodeBase64}' alt='Event QR Code' style='width: 200px; height: 200px;' />
                                         <p>For more details or if you have any questions, please <a href='#'>contact us</a>.</p>
                                         <p>Best regards,<br/>The SALEAF Team</p>
                                         <a href='#' class='button'>View Event Details</a>
@@ -319,6 +332,7 @@ namespace SeleafAPI.Controllers
                             </html>";
     return body;
 }
+
 
 
         private string BadEmail()
@@ -382,8 +396,10 @@ namespace SeleafAPI.Controllers
         }
 
     }
-    
-    
+
+
+
+
     public class AllDonorCertificateInfo
     {
         public int RefNo { get; set; }

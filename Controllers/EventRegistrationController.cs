@@ -24,54 +24,64 @@ public class EventRegistrationController : ControllerBase
         _eventRegistration = eventRegistration;
         _event = __event;
     }
-
+    
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<EventRegistration>> RegisterEvent(EventRegistrationDTO model)
     {
         var userId = User.FindFirst("userId")?.Value;
 
-        var choosenEvent = await _event.GetEventById(model.EventId);
-        
-        bool userRegisterd = await _eventRegistration.UserAlreadyRegisteredForEvent(userId!, model.EventId);
+        // Fetch the event and its packages
+        var chosenEvent = await _event.GetEventById(model.EventId);
 
-        if (userRegisterd)
+        if (chosenEvent == null)
+        {
+            return NotFound(new { Status = "Error", Message = "Event not found." });
+        }
+
+        
+        // Check if the user has already registered for this package
+        bool userRegistered = await _eventRegistration.UserAlreadyRegisteredForPackage(userId!, model.EventId, model.PackageName);
+
+        if (userRegistered)
         {
             return BadRequest(new 
             {
                 Status = "Error",
-                Message = $"You have already registered for this event."
+                Message = "You have already registered for this package."
             });
         }
         
-        if (model.Amount < choosenEvent.EventPrice)
-        {
-            return BadRequest(new 
-            {
-                Status = "Error",
-                Message = $"The entered amount {model.Amount} must be equal to or greater than the required amount {choosenEvent.EventPrice}."
-            });
-        }
-
-        var eventReg = new EventRegistration()
+        // Create a new EventRegistration
+        var eventReg = new EventRegistration
         {
             UserId = userId,
+            FristName = model.FristName,
+            LastName = model.LastName,
+            NumberOfParticipant = model.NumberOfParticipant,
+            PhoneNumber = model.PhoneNumber,
             EventId = model.EventId,
+            PacakageName = model.PackageName,
             Amount = model.Amount,
             IsPaid = false,
-            Currecny = model.Currecny
+            Currency = model.Currency
         };
+
         try
         {
-            var redirectUrl = await _payment.InitiateCheckoutAsyncEvent(await _eventRegistration.CreateEventRegistrationsAsync(eventReg),
-                    model.CancelUrl!, model.SuccessUrl!, model.FailureUrl!);
+            // Initiate payment
+            var redirectUrl = await _payment.InitiateCheckoutAsyncEvent(
+                await _eventRegistration.CreateEventRegistrationsAsync(eventReg),
+                model.CancelUrl!, model.SuccessUrl!, model.FailureUrl!
+            );
             return Ok(new { redirectUrl });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return StatusCode(500, $"Error processing the Event: {ex.Message}");
+            return StatusCode(500, $"Error processing the registration: {ex.Message}");
         }
     }
+
     
     [Authorize(Roles = "Admin")]
     [HttpGet]

@@ -215,11 +215,10 @@ using (var scope = app.Services.CreateScope())
     RecurringJob.AddOrUpdate(
         "update-event-statuses",
         () => eventStatusUpdater.UpdateEventStatuses(),
-        "*/30 * * * *"); 
+        "* * * * *"); //*/30****
 }
 
 app.Run();
-
 
 async Task SeedAdminUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
 {
