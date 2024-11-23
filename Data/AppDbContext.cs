@@ -37,6 +37,8 @@ namespace SeleafAPI.Data
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<Package> Packages { get; set; }
 
+        public DbSet<ChatBotConversation> ChatBotConversations { get; set; }
+
         public DbSet<EventRegistration> EventRegistrations { get; set; }        
         protected override void OnModelCreating(ModelBuilder builder)
         {
