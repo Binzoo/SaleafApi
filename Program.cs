@@ -208,16 +208,29 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Hangfire Recurring Job Example
 using (var scope = app.Services.CreateScope())
 {
     var eventStatusUpdater = scope.ServiceProvider.GetRequiredService<EventStatusUpdaterService>();
     RecurringJob.AddOrUpdate(
         "update-event-statuses",
         () => eventStatusUpdater.UpdateEventStatuses(),
-        "* * * * *"); //*/30****
-}
+        "* * * * *" // Every minute
+    );
 
+    // Schedule July 1 Notification
+    RecurringJob.AddOrUpdate<StudentNotificationJob>(
+        "notify-students-july",
+        job => job.NotifyStudentsAsync(),
+        "0 9 1 7 *" // July 1 at 9:00 AM
+    );
+
+    // Schedule December 1 Notification
+    RecurringJob.AddOrUpdate<StudentNotificationJob>(
+        "notify-students-december",
+        job => job.NotifyStudentsAsync(),
+        "0 9 1 12 *" // December 1 at 9:00 AM
+    );
+}
 app.Run();
 
 async Task SeedAdminUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)

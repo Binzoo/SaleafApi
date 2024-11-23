@@ -169,8 +169,8 @@ public class ChatBotController : ControllerBase
             var userId = User.FindFirst("userId")?.Value;
             var conversation = await _context.ChatBotConversations
                 .Where(e => e.AppUserId == userId)
-                .OrderByDescending(e => e.DateCreated) 
-                .Select(e => new 
+                .OrderByDescending(e => e.DateCreated)
+                .Select(e => new
                 {
                     e.Id,
                     e.BotResponse,
@@ -179,9 +179,8 @@ public class ChatBotController : ControllerBase
                 })
                 .ToListAsync();
 
-          return Ok(conversation);
+            return Ok(conversation);
         }
-        
     }
 
     public class ChatRequest

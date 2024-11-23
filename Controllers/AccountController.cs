@@ -320,9 +320,6 @@ namespace SeleafAPI.Controllers
         }
         
         
-        
-        
-
         [HttpPost("assign-role/{userId}")]
         public async Task<IActionResult> AssignRole(string userId, [FromBody] UserRoleDTO model)
         {

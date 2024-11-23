@@ -1,13 +1,10 @@
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
-using System;
 using System.Globalization;
-using System.Threading.Tasks;
 
 namespace SeleafAPI.Services
-{
-
-        public class EventStatusUpdaterService
+{ 
+    public class EventStatusUpdaterService
         {
             private readonly IRepository<Event> _eventRepository;
             public EventStatusUpdaterService(IRepository<Event> eventRepository)
