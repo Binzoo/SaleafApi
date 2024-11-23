@@ -132,7 +132,7 @@ namespace SaleafApi.Controllers
         
         [Authorize(Roles = "Admin")]
         [HttpPost("accept-reject-manual-payment")]
-        public async Task<IActionResult> RejectManualPayment([FromQuery] int referenceNo, string reason, int statusCode)
+        public async Task<IActionResult> RejectManualPayment([FromQuery] int referenceNo, string? reason, int statusCode)
         {
             try
             {
@@ -161,6 +161,11 @@ namespace SaleafApi.Controllers
                     var certificate = await _context.DonorCertificateInfos.FirstOrDefaultAsync(e => e.AppUserId == userId);
 
                     manualpayment.Checked = true;
+                    
+                    var userDonation = await _donation.GetDonationById(referenceNo);
+
+                    userDonation.IsPaid = true;
+                    await _donation.UpdateDonationStatusPOPAsync(referenceNo, true);
                     await _repository.UpdateAsync(manualpayment);
                     
                     if (certificate == null)

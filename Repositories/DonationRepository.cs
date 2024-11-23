@@ -41,6 +41,18 @@ namespace SaleafApi.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Donation>> GetAllLoggedInUserDonations(string userId)
+        {
+            var donations = await _context.Donations.Include(d => d.AppUser)
+                .Where(d => d.AppUserId == userId).Where(i => i.IsPaid == true).ToListAsync();
+            if (donations == null)
+            {
+                return null; 
+            }
+
+            return donations;
+        }
+
 
         public async Task<Donation> GetDonationById(int id)
         {
@@ -69,6 +81,16 @@ namespace SaleafApi.Repositories
         public async Task UpdateDonationStatusAsync(string paymentId, bool isPaid)
         {
             var donation = await GetDonationByPaymentIdAsync(paymentId);
+            if (donation != null)
+            {
+                donation.IsPaid = isPaid;
+                await _context.SaveChangesAsync();
+            }
+        }
+        
+        public async Task UpdateDonationStatusPOPAsync(int referenceNo, bool isPaid)
+        {
+            var donation = await GetDonationById(referenceNo);
             if (donation != null)
             {
                 donation.IsPaid = isPaid;

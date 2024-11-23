@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using SaleafApi.Interfaces;
+using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
@@ -15,13 +18,17 @@ namespace SeleafAPI.Controllers
         private readonly IDonation _donation;
         private readonly IEmailSender _emailService;
         private readonly IUserRepository _user;
-
-        public DonationController(IPayment payment, IDonation donation, IUserRepository user, IEmailSender emailService)
+        private readonly AppDbContext _donorCertificateInfo;
+        private readonly IPdf _pdf;
+        
+        public DonationController(IPayment payment, IDonation donation, IUserRepository user, IEmailSender emailService,AppDbContext donorCertificateInfo, IPdf pdf)
         {
             _payment = payment;
             _donation = donation;
             _user = user;
             _emailService = emailService;
+            _donorCertificateInfo = donorCertificateInfo;
+            _pdf = pdf;
         }
 
         [Authorize]
@@ -131,7 +138,96 @@ namespace SeleafAPI.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("get-logged-user-donations")]
+        public async Task<IActionResult> GetLoggedInUserDonation()
+        {
+            var userId = User.FindFirst("userId")?.Value;
+            var donations = await _donation.GetAllLoggedInUserDonations(userId);
 
+            if (donations.Any())
+            {
+                var totalDonations = donations.Select(d => d.Amount).Sum();
+                var minimumDonation = donations.Min(d => d.Amount);
+                var countDonations = donations.Count(d => d.AppUserId == userId);
+            
+                return Ok(new
+                {
+                    TotalDonations = totalDonations,
+                    AverageDonation = minimumDonation,
+                    NumberofCertificates = countDonations,
+                    Donations = donations,
+                });
+            }
+            return Ok(donations);
+        }
+        
+        [Authorize]
+        [HttpGet("request-section18-page/{donationId}")]
+        public async Task<IActionResult> RequestSection18Page([FromRoute] int donationId)
+        {
+            // Retrieve the user ID from the claims
+            var userId = User.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "User is not authorized." });
+
+            // Fetch certificate info for the user
+            var certificateInfo = await _donorCertificateInfo.DonorCertificateInfos
+                .FirstOrDefaultAsync(e => e.AppUserId == userId);
+
+            if (certificateInfo == null)
+                return NotFound(new { Message = "Certificate information not found." });
+
+            // Fetch donation information
+            var donationInfo = await _donation.GetDonationById(donationId);
+            if (donationInfo == null)
+                return NotFound(new { Message = $"Donation with ID {donationId} not found." });
+
+            // Fetch user details
+            var paidUser = await _user.FindByIdAsync(userId);
+            if (paidUser == null)
+                return NotFound(new { Message = "User information not found." });
+
+            // Prepare the certificate data
+            var allDonorCertificate = new AllDonorCertificateInfo
+            {
+                RefNo = donationInfo.Id,
+                FirstName = paidUser.FirstName,
+                LastName = paidUser.LastName,
+                IdentityNoOrCompanyRegNo = certificateInfo.IdentityNoOrCompanyRegNo,
+                IncomeTaxNumber = certificateInfo.IncomeTaxNumber,
+                Address = certificateInfo.Address,
+                PhoneNumber = certificateInfo.PhoneNumber,
+                Amount = donationInfo.Amount,
+                Email = paidUser.Email,
+                DateofReceiptofDonation = donationInfo.CreatedAt
+            };
+
+            // Generate the PDF
+            var pdfStream = _pdf.GetPdf(allDonorCertificate);
+
+            // Send email with the PDF attachment
+            try
+            {
+                await _emailService.SendEmailAsyncWithAttachment(
+                    paidUser.Email!,
+                    "Requested Section 18A Letter",
+                    SuccessEmail(),
+                    pdfStream,
+                    "Section18A.pdf"
+                );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Failed to send email.", Error = ex.Message });
+            }
+            return Ok(new
+            {
+                Message = "Section 18A Letter has been sent to your email."
+            });
+        }
+
+        
         private string returnManualPaymentHTMLFile(string referenceNo)
         {
             string body = @"
@@ -193,6 +289,68 @@ namespace SeleafAPI.Controllers
 
             return body;
         }
+        
+        
+        private  string SuccessEmail()
+    {
+        string body = @"
+                            <html>
+                            <head>
+                                <style>
+                                    .email-content {
+                                        font-family: Arial, sans-serif;
+                                        color: #333;
+                                    }
+                                    .email-header {
+                                        background-color: #f8f8f8;
+                                        padding: 20px;
+                                        text-align: center;
+                                        border-bottom: 1px solid #ddd;
+                                    }
+                                    .email-body {
+                                        padding: 20px;
+                                    }
+                                    .email-footer {
+                                        background-color: #f8f8f8;
+                                        padding: 10px;
+                                        text-align: center;
+                                        font-size: 12px;
+                                        color: #888;
+                                        border-top: 1px solid #ddd;
+                                    }
+                                    .button {
+                                        background-color: #28a745;
+                                        color: white;
+                                        padding: 10px 20px;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        display: inline-block;
+                                        border-radius: 5px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class='email-content'>
+                                    <div class='email-header'>
+                                        <h1>Thank You for Your Donation!</h1>
+                                    </div>
+                                    <div class='email-body'>
+                                        <p>Dear valued supporter,</p>
+                                        <p>We sincerely appreciate your generous donation.</p>
+                                        <p>Your support helps us continue our work and make a positive impact.</p>
+                                        <p>If you have any questions, feel free to <a href='#'>contact us</a>.</p>
+                                        <p>Best regards,<br/>The SALEAF Team</p>
+                                        <a href='#' class='button'>View Your Donation</a>
+                                    </div>
+                                    <div class='email-footer'>
+                                        <p>&copy; 2024 SALEAF. All rights reserved.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>";
+        return body;
+    }
+        
 
     }
 }

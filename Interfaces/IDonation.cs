@@ -15,6 +15,7 @@ namespace SaleafApi.Interfaces
         Task<Donation> GetDonationById(int id);
         Task<int> GetTotalDonationsCountAsync();
         Task<List<Donation>> GetPaginatedDonations(int pageNumber, int pageSize);
-        
+        Task<List<Donation>> GetAllLoggedInUserDonations(string userId);
+        Task UpdateDonationStatusPOPAsync(int referenceNo, bool isPaid);
     }
 }
