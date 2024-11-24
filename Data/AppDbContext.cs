@@ -41,6 +41,8 @@ namespace SeleafAPI.Data
 
         public DbSet<EventRegistration> EventRegistrations { get; set; }    
         public DbSet<StudentMarksUpload> StudentMarksUploads { get; set; }
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

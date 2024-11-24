@@ -12,8 +12,8 @@ public class StudentProfile
     [ForeignKey("AppUser")]
     public string? AppUserId { get; set; }
 
-    public List<string>? Skills { get; set; } 
-    public List<string>? Achievements { get; set; }
+    public List<Skill>? Skills { get; set; }
+    public List<Achievement>? Achievements { get; set; }
     public string? Year { get; set; }
     public bool IsFinalYear { get; set; }
     public string? Bio { get; set; }

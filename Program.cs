@@ -164,6 +164,8 @@ builder.Services.AddScoped<IPdf, PdfRepository>();
 builder.Services.AddScoped<IEvent, EventRepository>();
 builder.Services.AddScoped<IEventRegistration, EventRegistrationRepository>();
 builder.Services.AddScoped<IStudentProfileRepository, StudentProfileRepository>();
+builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
 
 
 

@@ -17,17 +17,19 @@ public class StudentProfileRepository : IStudentProfileRepository
 
     public async Task<StudentProfile?> GetByUserIdAsync(string userId)
     {
-        return await _context.StudentProfiles
+        return await _context.StudentProfiles.Include(e => e.Skills).Include(e => e.Achievements)
             .FirstOrDefaultAsync(sp => sp.AppUserId == userId);
     }
     public async Task<IEnumerable<StudentProfile>> GetAllAsync()
     {
-        return await _context.StudentProfiles.ToListAsync(); 
+        return await _context.StudentProfiles.Include(e => e.Skills).Include(e => e.Achievements)
+            .ToListAsync(); 
     }
 
     public Task<List<StudentProfile>> GetThreeStudentProfilesAsync()
     {
-        var threeStudentProfiles = _context.StudentProfiles.Take(3).ToListAsync();
+        var threeStudentProfiles = _context.StudentProfiles
+            .Include(e => e.Skills).Include(e => e.Achievements).Take(3).ToListAsync();
         return threeStudentProfiles;
     }
 
@@ -37,7 +39,7 @@ public class StudentProfileRepository : IStudentProfileRepository
         if (pageNumber < 1) pageNumber = 1;
         int skip = (pageNumber - 1) * pageSize;
 
-        return await _context.StudentProfiles
+        return await _context.StudentProfiles.Include(e => e.Skills).Include(e => e.Achievements)
             .OrderBy(sp => sp.FirstName) 
             .Skip(skip)
             .Take(pageSize)
