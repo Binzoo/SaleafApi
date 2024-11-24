@@ -15,4 +15,5 @@ public interface IEventRegistration
     Task<EventRegistration> GetEventRegistrationByUserIdEventIdAsync(int eventId, string userId);
     Task<bool> UserAlreadyRegisteredForEvent(string userId, int eventId);
     Task<bool> UserAlreadyRegisteredForPackage(string userId, int eventId,  string pacakageName);
+    Task<int> GetTotalParticipantsAsync(int eventId);
 }

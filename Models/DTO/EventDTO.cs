@@ -31,4 +31,7 @@ public class EventDTO
 
     [Required(ErrorMessage = "Packages are required")]
     public List<PackageDTO> Packages { get; set; } = new();
+    
+    [Range(1, int.MaxValue, ErrorMessage = "Capacity must be a positive number")]
+    public int? Capacity { get; set; }  
 }

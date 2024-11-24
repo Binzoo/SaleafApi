@@ -14,8 +14,7 @@ namespace SeleafAPI.Repositories
     {
         private readonly AppDbContext _context;
         private readonly HttpClient _httpClient;
-
-
+        
         public PaymentRepository(AppDbContext context, HttpClient httpClient)
         {
             _context = context;

@@ -25,6 +25,7 @@ namespace SeleafAPI.Mapping
             .ForMember(dest => dest.Vehicles, opt => opt.MapFrom(src => src.Vehicles))
             .ForMember(dest => dest.LifeAssurancePolicies, opt => opt.MapFrom(src => src.LifeAssurancePolicies))
             .ForMember(dest => dest.Investments, opt => opt.MapFrom(src => src.Investments))
+            .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => src.AppUserId))
             // Map other properties as needed
             ;
             CreateMap<BursaryApplication, BursaryApplicationDataDto>()

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QRCoder;
 using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
@@ -16,70 +17,113 @@ public class EventRegistrationController : ControllerBase
     private readonly IPayment _payment;
     private readonly IEventRegistration _eventRegistration;
     private readonly IEvent _event;
+    private readonly AppDbContext _context;
 
     public EventRegistrationController(AppDbContext context, IPayment payment, IEventRegistration eventRegistration, IEvent __event)
     {
         _payment = payment;
         _eventRegistration = eventRegistration;
         _event = __event;
+        _context = context;
     }
     
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<EventRegistration>> RegisterEvent(EventRegistrationDTO model)
     {
-        var userId = User.FindFirst("userId")?.Value;
+    if (!ModelState.IsValid)
+    {
+        return BadRequest(ModelState);
+    }
 
-        // Fetch the event and its packages
-        var chosenEvent = await _event.GetEventById(model.EventId);
+    var userId = User.FindFirst("userId")?.Value;
 
-        if (chosenEvent == null)
-        {
-            return NotFound(new { Status = "Error", Message = "Event not found." });
-        }
-
-        
-        // Check if the user has already registered for this package
-        bool userRegistered = await _eventRegistration.UserAlreadyRegisteredForPackage(userId!, model.EventId, model.PackageName);
-
-        if (userRegistered)
-        {
-          return BadRequest(new 
-          {
-                Status = "Error",
-                Message = "You have already registered for this package."
-          });
-        }
-        
-        // Create a new EventRegistration
-        var eventReg = new EventRegistration
-        {
-            UserId = userId,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            NumberOfParticipant = model.NumberOfParticipant,
-            PhoneNumber = model.PhoneNumber,
-            EventId = model.EventId,
-            PacakageName = model.PackageName,
-            Amount = model.Amount,
-            IsPaid = false,
-            Currency = model.Currency
-        };
-
+    // Begin a transaction to ensure atomic operations
+    using (var transaction = await _context.Database.BeginTransactionAsync())
+    {
         try
         {
+            // Fetch the event with an exclusive lock to prevent concurrent modifications
+            var chosenEvent = await _context.Events
+                                            .Where(e => e.EventId == model.EventId)
+                                            .FirstOrDefaultAsync();
+
+            if (chosenEvent == null)
+            {
+                return NotFound(new { Status = "Error", Message = "Event not found." });
+            }
+
+            // Check if the user has already registered for this package
+            bool userRegistered = await _eventRegistration.UserAlreadyRegisteredForPackage(userId!, model.EventId, model.PackageName);
+
+            if (userRegistered)
+            {
+                return BadRequest(new 
+                {
+                    Status = "Error",
+                    Message = "You have already registered for this package."
+                });
+            }
+
+            // Check event capacity if it's set
+            if (chosenEvent.Capacity.HasValue)
+            {
+                if (chosenEvent.Capacity.Value < model.NumberOfParticipant)
+                {
+                    return BadRequest(new 
+                    {
+                        Status = "Error",
+                        Message = $"Cannot register {model.NumberOfParticipant} participants. Only {chosenEvent.Capacity.Value} slots remaining."
+                    });
+                }
+
+                // Decrement the capacity
+                chosenEvent.Capacity -= model.NumberOfParticipant;
+
+                // Update the event in the context
+                _context.Events.Update(chosenEvent);
+            }
+
+            // Create a new EventRegistration
+            var eventReg = new EventRegistration
+            {
+                UserId = userId,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                NumberOfParticipant = model.NumberOfParticipant,
+                PhoneNumber = model.PhoneNumber,
+                EventId = model.EventId,
+                PacakageName = model.PackageName,
+                Amount = model.Amount,
+                IsPaid = false,
+                Currency = model.Currency
+            };
+
+            // Add the registration to the context
+            _context.EventRegistrations.Add(eventReg);
+
+            // Save changes within the transaction
+            await _context.SaveChangesAsync();
+
+            // Commit the transaction
+            await transaction.CommitAsync();
+
             // Initiate payment
             var redirectUrl = await _payment.InitiateCheckoutAsyncEvent(
-                await _eventRegistration.CreateEventRegistrationsAsync(eventReg),
+                eventReg,
                 model.CancelUrl!, model.SuccessUrl!, model.FailureUrl!
             );
+
             return Ok(new { redirectUrl });
         }
         catch (Exception ex)
         {
+            // Rollback the transaction on error
+            await transaction.RollbackAsync();
             return StatusCode(500, $"Error processing the registration: {ex.Message}");
         }
     }
+}
 
     
     [Authorize(Roles = "Admin")]
@@ -156,7 +200,6 @@ public class EventRegistrationController : ControllerBase
             return BadRequest(exception.Message);
         }
     }
-
     
     
     [HttpGet("verify-ticket/{id}")]

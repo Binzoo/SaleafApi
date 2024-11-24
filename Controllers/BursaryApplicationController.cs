@@ -288,6 +288,8 @@ namespace SeleafAPI.Controllers
                         var result =  await _userRepository.CreateAsync(appuser, "P@ssword!1");
                         if (result.Succeeded)
                         {
+                            bursary.AppUserId = appuser.Id;
+                            _context.Update(bursary);
                             await _context.SaveChangesAsync();
                             return Ok("Bursary Application and user has been Created");
                         }
@@ -321,7 +323,8 @@ namespace SeleafAPI.Controllers
                                                         .Include(b => b.FixedProperties)
                                                         .Include(b => b.Vehicles)
                                                         .Include(b => b.LifeAssurancePolicies)
-                                                        .Include(b => b.Investments)
+                                                        .Include(b => b.Investments).
+                                                        Include(b => b.AppUser)
                                                         .ToListAsync();
 
                 // Check if there are any records

@@ -21,7 +21,14 @@ public class EventRegistrationRepository : IEventRegistration
                 r.EventId == eventId && 
                 r.PacakageName == pacakageName);
         }
-    
+
+        public async Task<int> GetTotalParticipantsAsync(int eventId)
+        {
+            return await _context.EventRegistrations
+                .Where(er => er.EventId == eventId)
+                .SumAsync(er => er.NumberOfParticipant);
+        }   
+
         public async Task<List<EventRegistration>> GetEventRegistrationsAsync()
         {
             var eventRegistration = await _context.EventRegistrations

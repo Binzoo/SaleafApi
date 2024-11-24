@@ -46,8 +46,9 @@ namespace SeleafAPI.Controllers
                 Currency = request.Currency,
                 AppUserId = userId,
                 IsPaid = false,
-                isAnonymous = request.isAnonymous
+                isAnonymous = request.isAnonymous,
             };
+            
             try
             {
                 var redirectUrl = await _payment.InitiateCheckoutAsync(await _donation.CreateDonationAsync

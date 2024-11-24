@@ -74,6 +74,7 @@ namespace SeleafAPI.Controllers
                 Status = status,
                 Publish = eventDto.Publish,
                 EventImageUrl = eventImageUrl,
+                Capacity = eventDto.Capacity,  
                 Packages = eventDto.Packages.Select(p => new Package
                 {
                     PackageName = p.PackageName,
@@ -88,70 +89,70 @@ namespace SeleafAPI.Controllers
 
 
         [Authorize(Roles = "Admin")]
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateEvent([FromForm] EventDTO eventDto, int id)
-{
-    if (!ModelState.IsValid)
-    {
-        return BadRequest(ModelState);
-    }
-
-    var existingEvent = await _repository.GetByIdAsync(id);
-    if (existingEvent == null)
-    {
-        return NotFound("Event does not exist.");
-    }
-
-    if (eventDto.EndDateTime < eventDto.StartDateTime)
-    {
-        return BadRequest("End date and time cannot be earlier than start date and time.");
-    }
-
-    string status = DetermineEventStatus(eventDto.StartDateTime, eventDto.EndDateTime);
-
-    if (eventDto.EventImageFile != null && eventDto.EventImageFile.Length > 0)
-    {
-        var fileName = $"events/{Guid.NewGuid()}-{eventDto.EventImageFile.FileName}";
-        try
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEvent([FromForm] EventDTO eventDto, int id)
         {
-            using (var memoryStream = new MemoryStream())
+            if (!ModelState.IsValid)
             {
-                await eventDto.EventImageFile.CopyToAsync(memoryStream);
-                await _S3Service.UploadFileAsync(memoryStream, fileName);
+                return BadRequest(ModelState);
             }
-            existingEvent.EventImageUrl = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
+
+            var existingEvent = await _repository.GetByIdAsync(id);
+            if (existingEvent == null)
+            {
+                return NotFound("Event does not exist.");
+            }
+
+            if (eventDto.EndDateTime < eventDto.StartDateTime)
+            {
+                return BadRequest("End date and time cannot be earlier than start date and time.");
+            }
+
+            string status = DetermineEventStatus(eventDto.StartDateTime, eventDto.EndDateTime);
+
+            if (eventDto.EventImageFile != null && eventDto.EventImageFile.Length > 0)
+            {
+                var fileName = $"events/{Guid.NewGuid()}-{eventDto.EventImageFile.FileName}";
+                try
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await eventDto.EventImageFile.CopyToAsync(memoryStream);
+                        await _S3Service.UploadFileAsync(memoryStream, fileName);
+                    }
+                    existingEvent.EventImageUrl = $"https://{_bucketName}.s3.{_awsRegion}.amazonaws.com/{fileName}";
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"An error occurred while uploading the image: {ex.Message}");
+                }
+            }
+
+            existingEvent.EventName = eventDto.EventName;
+            existingEvent.EventDescription = eventDto.EventDescription;
+            existingEvent.Location = eventDto.Location;
+            existingEvent.StartDate = eventDto.StartDateTime.ToString("dd MMMM yyyy");
+            existingEvent.EndDate = eventDto.EndDateTime.ToString("dd MMMM yyyy");
+            existingEvent.StartTime = eventDto.StartDateTime.ToString("HH:mm");
+            existingEvent.EndTime = eventDto.EndDateTime.ToString("HH:mm");
+            existingEvent.Status = status;
+            existingEvent.Publish = eventDto.Publish;
+            existingEvent.Capacity = eventDto.Capacity;  
+
+            existingEvent.Packages.Clear();
+            foreach (var packageDto in eventDto.Packages)
+            {
+                existingEvent.Packages.Add(new Package
+                {
+                    PackageName = packageDto.PackageName,
+                    PackagePrice = packageDto.PackagePrice,
+                });
+            }
+
+            await _repository.UpdateAsync(existingEvent);
+
+            return Ok(new { message = "Event updated successfully", Event = existingEvent });
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An error occurred while uploading the image: {ex.Message}");
-        }
-    }
-
-    existingEvent.EventName = eventDto.EventName;
-    existingEvent.EventDescription = eventDto.EventDescription;
-    existingEvent.Location = eventDto.Location;
-    existingEvent.StartDate = eventDto.StartDateTime.ToString("dd MMMM yyyy");
-    existingEvent.EndDate = eventDto.EndDateTime.ToString("dd MMMM yyyy");
-    existingEvent.StartTime = eventDto.StartDateTime.ToString("HH:mm");
-    existingEvent.EndTime = eventDto.EndDateTime.ToString("HH:mm");
-    existingEvent.Status = status;
-    existingEvent.Publish = eventDto.Publish;
-
-    // Update packages
-    existingEvent.Packages.Clear();
-    foreach (var packageDto in eventDto.Packages)
-    {
-        existingEvent.Packages.Add(new Package
-        {
-            PackageName = packageDto.PackageName,
-            PackagePrice = packageDto.PackagePrice,
-        });
-    }
-
-    await _repository.UpdateAsync(existingEvent);
-
-    return Ok(new { message = "Event updated successfully", Event = existingEvent });
-}
 
         
         [HttpGet("get-three-latest-events")]

@@ -5,6 +5,7 @@ namespace SeleafAPI.Models.DTO;
 
 public class BursaryApplicationDataDto
 {
+    public string? AppUserId { get; set; }
     // Applicant Details
     public string? Name { get; set; }
     public string? Surname { get; set; }

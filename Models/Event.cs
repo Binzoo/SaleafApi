@@ -15,5 +15,7 @@ public class Event
     public string EndTime { get; set; }
     public string Status { get; set; }
     public bool Publish { get; set; }
+    public int? Capacity { get; set; }
+
     public ICollection<Package> Packages { get; set; } = new List<Package>();
 }
