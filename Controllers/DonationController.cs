@@ -104,6 +104,14 @@ namespace SeleafAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [HttpGet("get-donation-by-id/{id}")]
+        public async Task<IActionResult> GetDonationById(int id)
+        {
+            var donation = await _donation.GetDonationById(id);
+            return Ok(donation);
+        }
+        
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetDonations([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
