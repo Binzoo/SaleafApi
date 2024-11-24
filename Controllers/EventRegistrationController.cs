@@ -178,7 +178,6 @@ public class EventRegistrationController : ControllerBase
             {
                 return NotFound("Event registration not found.");
             }
-
             //string data = $"/EventRegistration/verify-ticket/{eventRegistrationOfUser.Id}";
             string data = EncryptionHelper.EncryptString(eventRegistrationOfUser.Id);
             byte[] qrCodeBytes;
@@ -188,7 +187,6 @@ public class EventRegistrationController : ControllerBase
                 PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
                 qrCodeBytes = qrCode.GetGraphic(20);
             }
-
             return File(qrCodeBytes, "image/png");
         }
         catch(Exception exception)
@@ -217,7 +215,6 @@ public class EventRegistrationController : ControllerBase
         {
             return BadRequest(exception.Message);
         }
-        
     }
     
 }

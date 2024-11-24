@@ -13,6 +13,7 @@ public class EventWithPackagesDTO
     public bool Publish { get; set; }
     public string? EventImageUrl { get; set; }
     public string? Status { get; set; }
-
+    
+    public int? Capacity { get; set; }
     public List<PackageDTO> Packages { get; set; } = new();
 }

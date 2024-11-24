@@ -40,6 +40,7 @@ public class EventRepository : IEvent
                 Publish = e.Publish,
                 EventImageUrl = e.EventImageUrl,
                 Status = e.Status,
+                Capacity = e.Capacity,
                 Packages = e.Packages.Select(p => new PackageDTO
                 {
                     PackageName = p.PackageName,
