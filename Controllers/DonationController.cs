@@ -116,6 +116,7 @@ namespace SeleafAPI.Controllers
 
             var model = donations.Select(d => new
             {
+                d.Id,
                 UserName = d.AppUser?.UserName ?? "Unknown",
                 FirstName = d.AppUser?.FirstName ?? "Unknown",
                 LastName = d.AppUser?.LastName ?? "Unknown",
