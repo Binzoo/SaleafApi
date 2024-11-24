@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
 using SeleafAPI.Data;
+using SeleafAPI.Helper;
 using SeleafAPI.Interfaces;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
@@ -39,8 +40,7 @@ public class EventRegistrationController : ControllerBase
     var userId = User.FindFirst("userId")?.Value;
 
     // Begin a transaction to ensure atomic operations
-    using (var transaction = await _context.Database.BeginTransactionAsync())
-    {
+  
         try
         {
             // Fetch the event with an exclusive lock to prevent concurrent modifications
@@ -104,10 +104,7 @@ public class EventRegistrationController : ControllerBase
 
             // Save changes within the transaction
             await _context.SaveChangesAsync();
-
-            // Commit the transaction
-            await transaction.CommitAsync();
-
+            
             // Initiate payment
             var redirectUrl = await _payment.InitiateCheckoutAsyncEvent(
                 eventReg,
@@ -118,10 +115,8 @@ public class EventRegistrationController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Rollback the transaction on error
-            await transaction.RollbackAsync();
             return StatusCode(500, $"Error processing the registration: {ex.Message}");
-        }
+        
     }
 }
 
@@ -184,7 +179,8 @@ public class EventRegistrationController : ControllerBase
                 return NotFound("Event registration not found.");
             }
 
-            string data = $"/EventRegistration/verify-ticket/{eventRegistrationOfUser.Id}";
+            //string data = $"/EventRegistration/verify-ticket/{eventRegistrationOfUser.Id}";
+            string data = EncryptionHelper.EncryptString(eventRegistrationOfUser.Id);
             byte[] qrCodeBytes;
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
@@ -202,12 +198,26 @@ public class EventRegistrationController : ControllerBase
     }
     
     
-    [HttpGet("verify-ticket/{id}")]
-    public async Task<IActionResult> VerifyTask(int id)
+    [HttpGet("verify-ticket/{encryptText}")]
+    public async Task<IActionResult> VerifyTask(string encryptText)
     {
-        var eventreg = await _eventRegistration.GetEventRegistrationsById(id);
-        return Ok(eventreg);
+        try
+        {
+            string decodedText = Uri.UnescapeDataString(encryptText);
+
+            int id = int.Parse(EncryptionHelper.DecryptString(decodedText));
+            var eventreg = await _eventRegistration.GetEventRegistrationsById(id);
+            return Ok(eventreg);
+        }
+        catch (FormatException)
+        {
+            return BadRequest("The input is not a valid Base-64 string.");
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+        
     }
-    
     
 }

@@ -8,6 +8,7 @@ using SeleafAPI.Data;
 using SeleafAPI.Interfaces;
 
 using QRCoder;
+using SeleafAPI.Helper;
 using SeleafAPI.Models;
 using SeleafAPI.Models.DTO;
 using SixLabors.ImageSharp;
@@ -75,8 +76,8 @@ namespace SeleafAPI.Controllers
                         return BadRequest("No user found.");
                     }
                     
-                    string data = "/EventRegistration/verify-ticket/" + eventreg.Id;
-                    
+                   // string data = "/EventRegistration/verify-ticket/" + eventreg.Id;
+                    string data = EncryptionHelper.EncryptString(eventreg.Id);
                     byte[] qrCodeBytes;
                     using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
                     {
