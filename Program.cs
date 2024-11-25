@@ -93,7 +93,6 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 
-
 // Database Context Configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"), npgsqlOptions =>

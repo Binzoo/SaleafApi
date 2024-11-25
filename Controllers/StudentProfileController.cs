@@ -43,8 +43,8 @@ public class StudentProfileController : ControllerBase
     }
 
     [HttpPost("create-profile")]
-    [Authorize(Roles = "Student")]
-
+    //[Authorize(Roles = "Student")]
+    [Authorize]
     public async Task<IActionResult> CreateStudentProfile([FromForm] StudentProfileDTO model)
 {
     if (model == null)
@@ -80,10 +80,10 @@ public class StudentProfileController : ControllerBase
         return BadRequest("User does not exist.");
     }
 
-    if (!existingUser.isStudent)
-    {
-        return BadRequest("The specified user is not a student.");
-    }
+    // if (!existingUser.isStudent)
+    // {
+    //     return BadRequest("The specified user is not a student.");
+    // }
     
     if (!existingUser.isVerified)
     {
