@@ -11,22 +11,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # Step 1: Checkout repository
       - uses: actions/checkout@v4
 
+      # Step 2: Set up .NET Core
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
+      # Step 3: Restore dependencies (specify solution or project file)
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore SaleafApi.sln
 
+      # Step 4: Build the application
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build SaleafApi.sln --configuration Release
 
+      # Step 5: Publish the application
       - name: Publish with dotnet
-        run: dotnet publish --configuration Release --output ${{env.RUNNER_TEMP}}\myapp
+        run: dotnet publish SaleafApi.sln --configuration Release --output ${{env.RUNNER_TEMP}}\myapp
 
+      # Step 6: Upload published artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
