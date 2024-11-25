@@ -29,13 +29,12 @@ namespace SaleafApi.Repositories
         public async Task<List<Donation>> GetPaginatedDonations(int pageNumber, int pageSize)
         {
             if (pageNumber < 1) pageNumber = 1;
-    
-            
+
             int skip = (pageNumber - 1) * pageSize;
 
-            
             return await _context.Donations
-                .OrderBy(d => d.CreatedAt).Include(d => d.AppUser) 
+                .OrderByDescending(d => d.CreatedAt) 
+                .Include(d => d.AppUser)
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync();
