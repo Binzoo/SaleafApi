@@ -474,6 +474,29 @@ namespace SeleafAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            var admins = await _userRepository.GetUsersInRoleAsync("Admin");
+
+            if (admins == null || !admins.Any())
+            {
+                return NotFound("No admins found.");
+            }
+
+            // Map to a DTO or return the raw user data
+            var adminDtos = admins.Select(admin => new
+            {
+                admin.Id,
+                admin.UserName,
+                admin.Email
+            });
+
+            return Ok(adminDtos);
+        }
+
+        
         private async Task<bool> ValidateResetCodeAsync(string userId, string submittedCode)
         {
             var resetEntry = await _passwordResetRepository.GetResetCodeAsync(userId, submittedCode);
@@ -501,6 +524,8 @@ namespace SeleafAPI.Controllers
                 return Convert.ToBase64String(randomBytes);
             }
         }
+        
+        
 
     }
 

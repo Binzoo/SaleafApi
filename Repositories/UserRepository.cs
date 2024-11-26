@@ -158,8 +158,13 @@ namespace SeleafAPI.Repositories
         }
     });
 }
-       
-        public async Task SaveRefreshTokenAsync(RefreshToken token)
+
+        public async Task<IEnumerable<AppUser>> GetUsersInRoleAsync(string roleName)
+        {
+            return await _userManager.GetUsersInRoleAsync(roleName);
+        }
+
+public async Task SaveRefreshTokenAsync(RefreshToken token)
         {
             await _context.RefreshTokens.AddAsync(token);
             await _context.SaveChangesAsync();
