@@ -137,22 +137,44 @@ namespace SeleafAPI.Controllers
             existingEvent.EndTime = eventDto.EndDateTime.ToString("HH:mm");
             existingEvent.Status = status;
             existingEvent.Publish = eventDto.Publish;
-            existingEvent.Capacity = eventDto.Capacity;  
+            existingEvent.Capacity = eventDto.Capacity;
 
-            existingEvent.Packages.Clear();
+            // Synchronize packages with the database
+            var existingPackages = existingEvent.Packages.ToList();
+            foreach (var existingPackage in existingPackages)
+            {
+                var packageDto = eventDto.Packages.FirstOrDefault(p => p.PackageName == existingPackage.PackageName);
+
+                if (packageDto != null)
+                {
+                    // Update existing package
+                    existingPackage.PackagePrice = packageDto.PackagePrice;
+                }
+                else
+                {
+                    // Remove package if it's no longer in the DTO
+                    existingEvent.Packages.Remove(existingPackage);
+                }
+            }
+
+            // Add new packages from the DTO that don't already exist
             foreach (var packageDto in eventDto.Packages)
             {
-                existingEvent.Packages.Add(new Package
+                if (!existingPackages.Any(p => p.PackageName == packageDto.PackageName))
                 {
-                    PackageName = packageDto.PackageName,
-                    PackagePrice = packageDto.PackagePrice,
-                });
+                    existingEvent.Packages.Add(new Package
+                    {
+                        PackageName = packageDto.PackageName,
+                        PackagePrice = packageDto.PackagePrice
+                    });
+                }
             }
 
             await _repository.UpdateAsync(existingEvent);
 
             return Ok(new { message = "Event updated successfully", Event = existingEvent });
         }
+
 
         
         [HttpGet("get-three-latest-events")]
