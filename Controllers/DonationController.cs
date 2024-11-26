@@ -288,7 +288,6 @@ namespace SeleafAPI.Controllers
                                         <p>Your reference number is: " + referenceNo + @" </p>
                                         <p>If you have any questions, feel free to <a href='#'>contact us</a>.</p>
                                         <p>Best regards,<br/>The SALEAF Team</p>
-                                        <a href='#' class='button'>Upload Proof of Payment</a>
                                     </div>
                                     <div class='email-footer'>
                                         <p>&copy; 2024 SALEAF. All rights reserved.</p>
