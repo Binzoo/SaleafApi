@@ -23,6 +23,8 @@ namespace SeleafAPI.Interfaces
         Task SaveRefreshTokenAsync(RefreshToken token);
         
         Task<IdentityResult> DeleteUserAsync(string userId);
+        
+        Task<IEnumerable<AppUser>> GetUsersInRoleAsync(string roleName);
 
 
     }
