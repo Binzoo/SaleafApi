@@ -524,9 +524,6 @@ namespace SeleafAPI.Controllers
                 return Convert.ToBase64String(randomBytes);
             }
         }
-        
-        
-
     }
 
 }
