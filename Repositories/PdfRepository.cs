@@ -36,9 +36,9 @@ namespace SaleafApi.Repositories
                     gfx.DrawString($"{allDonorCertificateInfo.FirstName} {allDonorCertificateInfo.LastName}", font, XBrushes.Black, new XRect(100, 385, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"{allDonorCertificateInfo.IdentityNoOrCompanyRegNo}", font, XBrushes.Black, new XRect(100, 400, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"{allDonorCertificateInfo.IncomeTaxNumber}", font, XBrushes.Black, new XRect(100, 412, page.Width, page.Height), XStringFormats.TopLeft);
-                    gfx.DrawString($"{allDonorCertificateInfo.Address}", font, XBrushes.Black, new XRect(66, 450, page.Width, page.Height), XStringFormats.TopLeft);
-                    gfx.DrawString($"{allDonorCertificateInfo.PhoneNumber}", font, XBrushes.Black, new XRect(66, 465, page.Width, page.Height), XStringFormats.TopLeft);
-                    gfx.DrawString($"{allDonorCertificateInfo.Email}", font, XBrushes.Black, new XRect(67, 480, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"{allDonorCertificateInfo.Address}", font, XBrushes.Black, new XRect(66, 465, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"{allDonorCertificateInfo.PhoneNumber}", font, XBrushes.Black, new XRect(66, 480, page.Width, page.Height), XStringFormats.TopLeft);
+                    gfx.DrawString($"{allDonorCertificateInfo.Email}", font, XBrushes.Black, new XRect(67, 495, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"{allDonorCertificateInfo.Amount} ({numberAmountInWords})", font, XBrushes.Black, new XRect(352, 450, page.Width, page.Height), XStringFormats.TopLeft);
                     gfx.DrawString($"{allDonorCertificateInfo.DateofReceiptofDonation}", font, XBrushes.Black, new XRect(443, 668, page.Width, page.Height), XStringFormats.TopLeft);
                 }
