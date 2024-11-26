@@ -73,7 +73,7 @@ public class ChatBotController : ControllerBase
                 model = model,
                 messages = new[]
                 {
-                    new { role = "system", content = "You are a helpful assistant specialized in SALEAF. Only answer questions related to SALEAF and respond with 'I can only assist with SALEAF-related queries' for unrelated topics. SALEAF is a registered NPO dedicated to raising funds to educate young South Africans of Lebanese descent, empowering them to achieve their full potential." },
+                    new { role = "system", content = "You are a helpful assistant specialized in SALEAF. SALEAF is a registered NPO dedicated to raising funds to educate young South Africans of Lebanese descent, empowering them to achieve their full potential. They donate them. If they want to donate they should go to saleaf website or the mobile phone." },
                     new { role = "user", content = request.Message }
                 },
                 temperature = 0.7
